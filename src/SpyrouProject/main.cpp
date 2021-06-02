@@ -3,7 +3,7 @@
 #include <fstream>
 #include <vector>
 #include <string>
-
+#include <algorithm>
 template <typename T>
 void print(std::vector<T> arr) {
     for (auto a : arr) {
@@ -16,53 +16,68 @@ void print(std::vector<T> arr) {
 int main()
 {
 
+    std::string a{ "a" };
+    std::string wholestring;
+    double nextDouble{};
+
+    const char* msg = "\nalex";
+
     std::fstream file;
-    file.open( "Ini.ini" ,std::ios::in | std::ios::out);
-
-
-   
-    
-
+    file.open("Ini.ini", std::ios::in | std::ios::out);
+    char c;
+ 
     if (!file) {
         std::cerr << "error: not open" << std::endl;
     }
-    std::string a{ "a" };
-    std::string nextSpace;
-    double nextDouble{};
-    
+    std::string in, out;
+    int blockNumber = 0;//Which bracket block we are looking for. We are currently looking for the second one.
 
-    while (file >> nextSpace) {
-        
-        if (nextSpace == "VERSION")
-        {
-            file >> nextSpace;
-            file.seekp(file.tellp());
-            file  << "2fefwewfew" << std::endl;
-            file >> nextSpace;
-         }
+    while (file.get(c)) {
 
-        else if (nextSpace == "FOLDER")
+        wholestring.push_back(c);
+            
+     }
+    file.close();
+    int counter = 0;
+    std::string check{};
+    for (int i{ 0 }; i < wholestring.length(); i++) 
+    {
+        check.push_back(wholestring[i]);
+        if (check == "[ VERSION ]") 
         {
-            file >> nextSpace;
-            int  position = file.tellp();
-            file.seekp(position);
-           // file << "\n" << " \n" << std::endl;
-           // file >> nextSpace;
+            std::string temp = "\n1.5.7";
+            wholestring.replace(i + 1, 0, temp);
+            i += temp.length()+1;
+            check.clear();
+        }
+        if (check == "[ LOG FOLDER ]") 
+        {
+            std::string temp = "\n--";
+            wholestring.replace(i + 1, 0, temp);
+            i += temp.length() + 1;
+            check.erase();
+        }
+        if (check == "[ LOG FILE ]") 
+        {
+            std::string temp = "\n C:\\Users\\Alex\\Desktop  \\test\\  test_project\\test_project";
+
+            temp.erase(remove_if(temp.begin(), temp.end(), isspace), temp.end());
+            wholestring.replace(i + 1, 0, temp);
+            i += temp.length() + 1;
+            check.erase();
+        }
+        if (check == "[ MAX THREADS ]") 
+        {
+            std::string temp = "\n 1";
+            temp.erase(remove_if(temp.begin(), temp.end(), isspace), temp.end());
+            wholestring.replace(i + 1, 0, temp);
+            i += temp.length() + 1;
+            check.erase();
+        }
+        if (check == "-EOS-") {
+            counter++;
+            check.erase();
         }
     }
-    file.close();
-  
-    file.open("Ini.ini", std::ios::in | std::ios::out);
-    while (file >> nextSpace) {
-
-        if (nextSpace == "VERSION") {
-            std::getline(file, nextSpace);
-            file >> nextSpace;
-            std::cout << nextSpace << std::endl;
-
-        }
-    }
-
-    file.close();
-
+    std::cout << counter << std::endl;
 }
