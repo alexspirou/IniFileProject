@@ -1,3 +1,3 @@
 ﻿  main.cpp
-C:\repos\SpyrouAlexandrosProject\src\SpyrouProject\main.cpp(43,24): warning C4018: '<': signed/unsigned mismatch
-  SpyrouProject.vcxproj -> C:\repos\SpyrouAlexandrosProject\src\Debug\SpyrouProject.exe
+C:\Users\Alex\Desktop\project\SpyrouAlexandrosProject\src\SpyrouProject\main.cpp(85,25): warning C4018: '<': signed/unsigned mismatch
+  SpyrouProject.vcxproj -> C:\Users\Alex\Desktop\project\SpyrouAlexandrosProject\src\Debug\SpyrouProject.exe
