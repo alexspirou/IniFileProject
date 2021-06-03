@@ -19,20 +19,32 @@ int main()
 
     std::ifstream inFile;
     std::ofstream outFile;
-    std::vector<std::string> vSHeaders(14);
+    int i = 0;
+    int j = 0;
+    size_t headerSize = 0;
     std::string nextLine{};
+
+    //count header vector size
+    inFile.open("Ini.ini");
+    while (getline(inFile, nextLine))
+    {
+        headerSize ++;
+    }
+    inFile.close();
+
+    std::vector<std::string> vSHeaders(headerSize);
     inFile.open("Ini.ini");
     if (!inFile) {
         std::cerr << "error: not open" << std::endl;
     }
-    int blockNumber = 0;//Which bracket block we are looking for. We are currently looking for the second one.
-    //read file
-    int i = 0;
-    int j = 0;
+    //read file//
+
     while (getline(inFile, nextLine)) 
     {
-        vSHeaders[i] = (nextLine);
-        i++;
+        if (nextLine.find('[') != std::string::npos) {
+            vSHeaders[i] = (nextLine);
+            i++;
+        }
     }
     inFile.close();
 
@@ -50,67 +62,70 @@ int main()
     vHeaderValues[9] = "YES"; //[IGNORE TX WITH MISSING LOSSES]
     vHeaderValues[10] = "km"; //[MAX RADIUS UNIT]
     vHeaderValues[11] = "-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0"; //[BASIC PARAMETERS]
-   
-    //std::string s;
-    //int counter = 0;
-    //for (i = 0, j=0; i < vSHeaders.size() && j < vSHeaders.size(); i++,j++)
-    //{
-    //    if (vSHeaders[i] == "[ -A SECTION- ]") {
 
-    //        vSHeaders[i].replace(0, 0, "-EOS-\n\n");
-    //        i++;
-    //        
-    //    }
-    //    if (vSHeaders[i] == "[ -B SECTION- ]") {
-
-    //        vSHeaders[i].replace(0, 0, "-EOS-\n\n");
-    //        i++;
-    //       
-    //    }
-    //    
-    //    vSHeaders[i].replace(vSHeaders[i].length(), 0, "\n" + vHeaderValues[j]);
-    //    //std::cout << vSHeaders[i] << std::endl;
-    //    //getline(std::cin, s);
-    //    //std::cout << std::endl;
-
-    //    //vSHeaders[i].replace(vSHeaders[i].length(), 0, "\n" + s);
-    //    //input
-
-    //}
-    //vSHeaders[vSHeaders.size()-1].replace(vSHeaders[vSHeaders.size()-1].length(), 0, "\n-EOS-\n-EOF-");
-    
-    outFile.open("Ini.ini", std::ofstream::trunc);
-    i = 0;
-    std::streampos  pos;
-    while (outFile && i < vSHeaders.size()) {
-       pos = outFile.tellp();
-
-        if (vSHeaders[i] == "[ -A SECTION- ]")
-        {
-            std::streampos temPos = pos;
-            outFile.seekp(pos);
-            outFile << "-EOS-" << std::endl;
-            outFile.seekp(temPos);
-        }
-        if (vSHeaders[i] == "[ -B SECTION- ]")
-        {
-            std::streampos temPos = outFile.tellp();
-            outFile.seekp(pos);
-            outFile << "-EOS-" << std::endl;
-            outFile.seekp(temPos);
-
-        }
-        outFile << vSHeaders[i] << "\n" << vHeaderValues[i] << "\n";
-        std::cout << pos << std::endl;
-
-
-        i++;
+    int indexSectionA{0};
+    int indexSectionB{0};
+    auto it = find(vSHeaders.begin(), vSHeaders.end(), "[ -A SECTION- ]");
+    if (it != vSHeaders.end()) {
+          indexSectionA = it - vSHeaders.begin();
     }
-    print(vSHeaders);
+    it = find(vSHeaders.begin(), vSHeaders.end(), "[ -B SECTION- ]");
+    if (it != vSHeaders.end()) {
+          indexSectionB = it - vSHeaders.begin();
+    }
 
 
-     
-        
+    outFile.open("Ini.ini", std::ofstream::trunc);
 
- 
+    i = 0;
+    while (outFile && i < vSHeaders.size()) {
+
+        outFile << vSHeaders[i] << "\n" << vHeaderValues[j] << std::endl;
+        if (i == indexSectionA -1)
+        {
+            i++;
+            outFile << "-EOS-\n" << "\n"<< vSHeaders[i] << std::endl;
+        }
+        if (i == indexSectionB - 1)
+        {    
+            i++;
+            outFile << "-EOS-\n" << "\n" << vSHeaders[i] << std::endl;
+        }
+        i++; j++;
+    }
+
+    outFile << "-EOS-" << "\n" << "-EOF-" << std::endl;
+
+    outFile.close();
+    
+
+    //Validate
+
+    inFile.open("Ini.ini");
+    std::vector<std::string> vSValidatedData{20};
+    i = 0;
+    int counter = 0;
+    while (getline(inFile, nextLine) && i < vSValidatedData.size()) {
+        getline(inFile, nextLine);
+        if (nextLine == "-EOS-") {
+            counter++;
+        }
+        if (counter == 0) {
+            vSValidatedData[i] = nextLine;
+        }
+        else if (counter == 1) {
+            
+            getline(inFile, nextLine);
+
+            vSValidatedData[i] = nextLine;
+        }
+        else if (counter == 2) {
+            getline(inFile, nextLine);
+            vSValidatedData[i] = nextLine;
+        }
+       
+        i ++;
+    }
+    print(vSValidatedData);
+    inFile.close();
 }
