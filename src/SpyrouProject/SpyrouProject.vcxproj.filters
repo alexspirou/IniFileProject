@@ -28,12 +28,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="somefile.txt">
-      <Filter>Resource Files</Filter>
-    </Text>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Ini.ini">
+    <None Include="Application.ini">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

@@ -146,10 +146,7 @@
     <ClInclude Include="CIni.h" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="somefile.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Ini.ini" />
+    <None Include="Application.ini" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

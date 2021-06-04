@@ -15,34 +15,42 @@ void print(std::vector<T> arr) {
 
 int main()
 {
+    int aa = 10;
+    int vv = 20;
 
+    int var =  (10 < 20 && 1 < 2 && 200 < 20) ? 50 : 20;
 
-    std::ifstream inFile;
-    std::ofstream outFile;
+    std::ifstream inFile{};
+    std::ofstream outFile{};
+    std::string sFileName{ "Application.ini" };
+    std::vector<std::string> m_vSectionNames{ "[ -A SECTION- ]" , "[ -B SECTION- ]" };
+
     int i = 0;
     int j = 0;
     size_t headerSize = 0;
-    std::string nextLine{};
+    std::string m_sNextLine{};
 
     //count header vector size
-    inFile.open("Ini.ini");
-    while (getline(inFile, nextLine))
+    inFile.open(sFileName);
+    while (getline(inFile, m_sNextLine))
     {
-        headerSize ++;
+        if (m_sNextLine.find(']') != std::string::npos) {
+            headerSize++;
+        }
     }
     inFile.close();
 
     std::vector<std::string> vSHeaders(headerSize);
-    inFile.open("Ini.ini");
+    inFile.open(sFileName);
     if (!inFile) {
         std::cerr << "error: not open" << std::endl;
     }
     //read file//
 
-    while (getline(inFile, nextLine)) 
+    while (getline(inFile, m_sNextLine)) 
     {
-        if (nextLine.find('[') != std::string::npos) {
-            vSHeaders[i] = (nextLine);
+        if (m_sNextLine.find('[') != std::string::npos) {
+            vSHeaders[i] = (m_sNextLine);
             i++;
         }
     }
@@ -65,17 +73,17 @@ int main()
 
     int indexSectionA{0};
     int indexSectionB{0};
-    auto it = find(vSHeaders.begin(), vSHeaders.end(), "[ -A SECTION- ]");
+    auto it = find(vSHeaders.begin(), vSHeaders.end(), m_vSectionNames[0]);
     if (it != vSHeaders.end()) {
           indexSectionA = it - vSHeaders.begin();
     }
-    it = find(vSHeaders.begin(), vSHeaders.end(), "[ -B SECTION- ]");
+    it = find(vSHeaders.begin(), vSHeaders.end(), m_vSectionNames[1]);
     if (it != vSHeaders.end()) {
           indexSectionB = it - vSHeaders.begin();
     }
 
 
-    outFile.open("Ini.ini", std::ofstream::trunc);
+    outFile.open(sFileName, std::ofstream::trunc);
 
     i = 0;
     while (outFile && i < vSHeaders.size()) {
@@ -84,6 +92,7 @@ int main()
         if (i == indexSectionA -1)
         {
             i++;
+          
             outFile << "-EOS-\n" << "\n"<< vSHeaders[i] << std::endl;
         }
         if (i == indexSectionB - 1)
@@ -101,31 +110,30 @@ int main()
 
     //Validate
 
-    inFile.open("Ini.ini");
-    std::vector<std::string> vSValidatedData{20};
-    i = 0;
-    int counter = 0;
-    while (getline(inFile, nextLine) && i < vSValidatedData.size()) {
-        getline(inFile, nextLine);
-        if (nextLine == "-EOS-") {
-            counter++;
-        }
-        if (counter == 0) {
-            vSValidatedData[i] = nextLine;
-        }
-        else if (counter == 1) {
-            
-            getline(inFile, nextLine);
+    inFile.open(sFileName);
 
-            vSValidatedData[i] = nextLine;
+    std::vector<std::string> vSValidatedData{ headerSize };
+    i = 0;
+    int m_IEosCounter = 0;
+
+    while (getline(inFile, m_sNextLine )&& m_sNextLine!="-EOF-") {
+
+        getline(inFile, m_sNextLine);
+
+        (m_sNextLine == "-EOS-") ? getline(inFile, m_sNextLine) : inFile;
+        (m_sNextLine == "") ? getline(inFile, m_sNextLine) : inFile;
+        (m_sNextLine == m_vSectionNames[0] || m_sNextLine == m_vSectionNames[1]) ? inFile >> m_sNextLine : inFile;
+        if (m_sNextLine == "-EOF-")
+        {
+            break;
         }
-        else if (counter == 2) {
-            getline(inFile, nextLine);
-            vSValidatedData[i] = nextLine;
-        }
-       
-        i ++;
+        vSValidatedData[i] = m_sNextLine;
+        i++;
+        
     }
+    std::cout << vSValidatedData.size() << std::endl;
     print(vSValidatedData);
+    std::cout << vSValidatedData.size();
     inFile.close();
 }
+
