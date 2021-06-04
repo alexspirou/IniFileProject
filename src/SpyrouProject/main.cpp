@@ -15,19 +15,19 @@ void print(std::vector<T> arr) {
 
 int main()
 {
-    int aa = 10;
-    int vv = 20;
-
-    int var =  (10 < 20 && 1 < 2 && 200 < 20) ? 50 : 20;
 
     std::ifstream inFile{};
     std::ofstream outFile{};
     std::string sFileName{ "Application.ini" };
     std::vector<std::string> m_vSectionNames{ "[ -A SECTION- ]" , "[ -B SECTION- ]" };
 
-    int i = 0;
-    int j = 0;
-    size_t headerSize = 0;
+    //indeces
+    int headersIndex = { 0 };
+    int valuesIndex{ 0 };
+    int validationsIndex{ 0 };
+
+
+    size_t headerSize{ 0 };
     std::string m_sNextLine{};
 
     //count header vector size
@@ -40,7 +40,7 @@ int main()
     }
     inFile.close();
 
-    std::vector<std::string> vSHeaders(headerSize);
+    std::vector<std::string> m_vHeaders(headerSize);
     inFile.open(sFileName);
     if (!inFile) {
         std::cerr << "error: not open" << std::endl;
@@ -50,8 +50,8 @@ int main()
     while (getline(inFile, m_sNextLine)) 
     {
         if (m_sNextLine.find('[') != std::string::npos) {
-            vSHeaders[i] = (m_sNextLine);
-            i++;
+            m_vHeaders[headersIndex] = (m_sNextLine);
+            headersIndex++;
         }
     }
     inFile.close();
@@ -73,34 +73,34 @@ int main()
 
     int indexSectionA{0};
     int indexSectionB{0};
-    auto it = find(vSHeaders.begin(), vSHeaders.end(), m_vSectionNames[0]);
-    if (it != vSHeaders.end()) {
-          indexSectionA = it - vSHeaders.begin();
+    auto it = find(m_vHeaders.begin(), m_vHeaders.end(), m_vSectionNames[0]);
+    if (it != m_vHeaders.end()) {
+          indexSectionA = it - m_vHeaders.begin();
     }
-    it = find(vSHeaders.begin(), vSHeaders.end(), m_vSectionNames[1]);
-    if (it != vSHeaders.end()) {
-          indexSectionB = it - vSHeaders.begin();
+    it = find(m_vHeaders.begin(), m_vHeaders.end(), m_vSectionNames[1]);
+    if (it != m_vHeaders.end()) {
+          indexSectionB = it - m_vHeaders.begin();
     }
 
 
     outFile.open(sFileName, std::ofstream::trunc);
 
-    i = 0;
-    while (outFile && i < vSHeaders.size()) {
+    headersIndex = 0;
+    while (outFile && headersIndex < m_vHeaders.size()) {
 
-        outFile << vSHeaders[i] << "\n" << vHeaderValues[j] << std::endl;
-        if (i == indexSectionA -1)
+        outFile << m_vHeaders[headersIndex] << "\n" << vHeaderValues[valuesIndex] << std::endl;
+        if (headersIndex == indexSectionA -1)
         {
-            i++;
+            headersIndex++;
           
-            outFile << "-EOS-\n" << "\n"<< vSHeaders[i] << std::endl;
+            outFile << "-EOS-\n" << "\n"<< m_vHeaders[headersIndex] << std::endl;
         }
-        if (i == indexSectionB - 1)
+        if (headersIndex == indexSectionB - 1)
         {    
-            i++;
-            outFile << "-EOS-\n" << "\n" << vSHeaders[i] << std::endl;
+            headersIndex++;
+            outFile << "-EOS-\n" << "\n" << m_vHeaders[headersIndex] << std::endl;
         }
-        i++; j++;
+        headersIndex++; valuesIndex++;
     }
 
     outFile << "-EOS-" << "\n" << "-EOF-" << std::endl;
@@ -111,29 +111,54 @@ int main()
     //Validate
 
     inFile.open(sFileName);
-
-    std::vector<std::string> vSValidatedData{ headerSize };
-    i = 0;
+    m_vHeaders.erase(m_vHeaders.begin() + indexSectionB);
+    m_vHeaders.erase(m_vHeaders.begin()+ indexSectionA);
+    std::vector<std::string> vSValidatedData{ m_vHeaders.size() };
+    std::vector<double> doubleData{ 20};
+    double nextDouble;
+    headersIndex = 0;
+    int i = 0;
+    char c{};
     int m_IEosCounter = 0;
+    while (getline(inFile, m_sNextLine)) {
 
-    while (getline(inFile, m_sNextLine )&& m_sNextLine!="-EOF-") {
-
-        getline(inFile, m_sNextLine);
-
-        (m_sNextLine == "-EOS-") ? getline(inFile, m_sNextLine) : inFile;
-        (m_sNextLine == "") ? getline(inFile, m_sNextLine) : inFile;
-        (m_sNextLine == m_vSectionNames[0] || m_sNextLine == m_vSectionNames[1]) ? inFile >> m_sNextLine : inFile;
-        if (m_sNextLine == "-EOF-")
-        {
+        
+        m_IEosCounter = (m_sNextLine == "-EOS-") ? m_IEosCounter += 1 : m_IEosCounter;
+        if (m_IEosCounter >= 3) {
             break;
         }
-        vSValidatedData[i] = m_sNextLine;
-        i++;
-        
+        //Change line when the header has the same value and store the data
+        if (m_sNextLine == m_vHeaders[headersIndex] && m_sNextLine!= "[ BASIC PARAMETERS ]") {
+            getline(inFile, m_sNextLine);
+            vSValidatedData[validationsIndex] = m_sNextLine;
+            validationsIndex ++;
+            headersIndex++;
+        }
     }
-    std::cout << vSValidatedData.size() << std::endl;
-    print(vSValidatedData);
-    std::cout << vSValidatedData.size();
     inFile.close();
+
+    inFile.open(sFileName);
+
+    while (inFile >>nextDouble){
+        m_IEosCounter = (m_sNextLine == "-EOS-") ? m_IEosCounter += 1 : m_IEosCounter;
+        if (m_IEosCounter < 2) {
+            getline(inFile, m_sNextLine);
+
+        }
+        if (m_IEosCounter == 2) {
+            doubleData[i] = nextDouble;
+            i++;
+        }
+
+    }
+
+
+
+    inFile.close();
+
+    print(vSValidatedData);
+    print(doubleData);
+
+
 }
 

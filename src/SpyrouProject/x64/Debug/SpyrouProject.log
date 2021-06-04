@@ -1,4 +1,4 @@
 ﻿  main.cpp
-C:\Users\Alex\Desktop\project\SpyrouAlexandrosProject\src\SpyrouProject\main.cpp(78,30): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-C:\Users\Alex\Desktop\project\SpyrouAlexandrosProject\src\SpyrouProject\main.cpp(82,30): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-  SpyrouProject.vcxproj -> C:\Users\Alex\Desktop\project\SpyrouAlexandrosProject\src\x64\Debug\SpyrouProject.exe
+C:\Users\Alex\Desktop\reponew\SpyrouAlexandrosProject\src\SpyrouProject\main.cpp(78,30): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Users\Alex\Desktop\reponew\SpyrouAlexandrosProject\src\SpyrouProject\main.cpp(82,30): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+  SpyrouProject.vcxproj -> C:\Users\Alex\Desktop\reponew\SpyrouAlexandrosProject\src\x64\Debug\SpyrouProject.exe
