@@ -1,19 +1,59 @@
 #include "CIni.h"
+#include <iostream>
+#include <fstream>
+#include <vector>
+#include <string>
 #include <algorithm>
+template <typename T>
+void print(std::vector<T> arr) {
+    int i = 0;
+    for (auto a : arr) {
 
-CIni::CIni() 
-{
-	std::cout << "CIni constructor called " << std::endl;
-    readFile();
-    std::string* s = new std::string();
-    s = NULL;
-    writeFile(s);
-    validateFile();
+        std::cout <<i << ":" << a << std::endl;
+        i++;
+    }
+    std::cout << std::endl;
 }
 
-void CIni::readFile() 
+
+int main()
 {
+    //auto findSectionIndex = [](std::vector<std::string> v, std::string s)
+    //{
+    //    int index;
+    //    auto it = find(v.begin(), v.end(), s);
+    //    if (it != v.end()) {
+    //        index = it - v.begin();
+    //        return index;
+    //};
+    //Conver string to int
+    auto toInt = [](std::string s)
+    {
+        int temp = stoi(s);
+        return temp;
+    };
+    auto toUpper = [](std::string s) 
+    {
+        std::transform(s.begin(), s.end(), s.begin(), ::toupper);
+        return s;
+    };
+    
+
+
+    std::ifstream inFile{};
+    std::ofstream outFile{};
+    std::string sFileName{ "Application.ini" };
+    std::vector<std::string> m_vSectionNames{ "[ -A SECTION- ]" , "[ -B SECTION- ]" };
+
+    //indeces
     int headersIndex = { 0 };
+    int valuesIndex{ 0 };
+    int validationsIndex{ 0 };
+
+
+    size_t headerSize{ 0 };
+    std::string m_sNextLine{};
+
     //count header vector size
     inFile.open(sFileName);
     while (getline(inFile, m_sNextLine))
@@ -24,14 +64,14 @@ void CIni::readFile()
     }
     inFile.close();
 
-    m_vHeaders.resize(headerSize);
+    std::vector<std::string> m_vHeaders(headerSize);
     inFile.open(sFileName);
     if (!inFile) {
         std::cerr << "error: not open" << std::endl;
     }
     //read file//
 
-    while (getline(inFile, m_sNextLine))
+    while (getline(inFile, m_sNextLine)) 
     {
         if (m_sNextLine.find('[') != std::string::npos) {
             m_vHeaders[headersIndex] = (m_sNextLine);
@@ -39,16 +79,9 @@ void CIni::readFile()
         }
     }
     inFile.close();
-}
 
-void CIni::writeFile(std::string* userInput)
-{
-    //Indices for vectors
-    int j{ 0 };
-    int i{ 0 };
-
-    vHeaderValues.resize(m_vHeaders.size() - m_vSectionNames.size());
-
+    //write file
+    std::vector<std::string> vHeaderValues{ 20 };
     vHeaderValues[0] = "2.7.8"; // [VERSION]
     vHeaderValues[1] = "--";    //[LOG FOLDER]
     vHeaderValues[2] = "foder";  //[LOG FILE]
@@ -62,94 +95,98 @@ void CIni::writeFile(std::string* userInput)
     vHeaderValues[10] = "km"; //[MAX RADIUS UNIT]
     vHeaderValues[11] = "-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0"; //[BASIC PARAMETERS]
 
+    int indexSectionA{0};
+    int indexSectionB{0};
     auto it = find(m_vHeaders.begin(), m_vHeaders.end(), m_vSectionNames[0]);
-    if (it != m_vHeaders.end())
-    {
-        indexSectionA = it - m_vHeaders.begin();
+    if (it != m_vHeaders.end()) {
+          indexSectionA = it - m_vHeaders.begin();
     }
     it = find(m_vHeaders.begin(), m_vHeaders.end(), m_vSectionNames[1]);
-    if (it != m_vHeaders.end()) 
-    {
-        indexSectionB = it - m_vHeaders.begin();
+    if (it != m_vHeaders.end()) {
+          indexSectionB = it - m_vHeaders.begin();
     }
+
+
+
+
 
     outFile.open(sFileName, std::ofstream::trunc);
 
-    while (outFile && i < m_vHeaders.size()) 
-    {
-        if (userInput == NULL) {
-            outFile << m_vHeaders[i] << "\n" << vHeaderValues[j] << std::endl;
-            if (i == indexSectionA - 1)
-            {
-                i++;
-                outFile << "-EOS-\n" << "\n" << m_vHeaders[i] << std::endl;
-            }
-            if (i == indexSectionB - 1)
-            {
-                i++;
-                outFile << "-EOS-\n" << "\n" << m_vHeaders[i] << std::endl;
-            }
-            i++; j++;
+    headersIndex = 0;
+    while (outFile && headersIndex < m_vHeaders.size()) {
+
+        outFile << m_vHeaders[headersIndex] << "\n" << vHeaderValues[valuesIndex] << std::endl;
+        if (headersIndex == indexSectionA -1)
+        {
+            headersIndex++;
+          
+            outFile << "-EOS-\n" << "\n"<< m_vHeaders[headersIndex] << std::endl;
         }
-        else {
-            outFile << m_vHeaders[i] << "\n" << vHeaderValues[j] << std::endl;
-            std::cout << "here" << std::endl;
+        if (headersIndex == indexSectionB - 1)
+        {    
+            headersIndex++;
+            outFile << "-EOS-\n" << "\n" << m_vHeaders[headersIndex] << std::endl;
         }
+        headersIndex++; valuesIndex++;
     }
 
     outFile << "-EOS-" << "\n" << "-EOF-" << std::endl;
 
     outFile.close();
-}
+    
 
-void CIni::validateFile()
-{
     //Validate
-    auto toInt = [](std::string s)
-    {
-        int temp = stoi(s);
-        return temp;
-    };
-    auto toUpper = [](std::string s)
-    {
-        std::transform(s.begin(), s.end(), s.begin(), ::toupper);
-        return s;
-    };
-    //Indices for vectors
-    int headersIndex = 0;
-    int validationsIndex = 0;
 
-    int m_IEosCounter = 0;
-    m_vHeaders.erase(m_vHeaders.begin() + indexSectionB);
-    m_vHeaders.erase(m_vHeaders.begin() + indexSectionA);
-   
     inFile.open(sFileName);
-    m_vValData.resize(m_vHeaders.size());
+    m_vHeaders.erase(m_vHeaders.begin() + indexSectionB);
+    m_vHeaders.erase(m_vHeaders.begin()+ indexSectionA);
+    std::vector<std::string> m_vValData{ m_vHeaders.size() };
+    std::vector<double> doubleData{ 20};
+    double nextDouble;
+    headersIndex = 0;
+    int i = 0;
+    char c{};
+    int m_IEosCounter = 0;
+    while (getline(inFile, m_sNextLine)) {
 
-    //Store the data
-    while (getline(inFile, m_sNextLine)) 
-    {
-        //Counter for -EOS-
+        
         m_IEosCounter = (m_sNextLine == "-EOS-") ? m_IEosCounter += 1 : m_IEosCounter;
-        if (m_IEosCounter >= 3) 
-        {
+        if (m_IEosCounter >= 3) {
             break;
         }
         //Change line when the header has the same value and store the data
-        if (m_sNextLine == m_vHeaders[headersIndex] && m_sNextLine != "[ BASIC PARAMETERS ]") 
-        {
+        if (m_sNextLine == m_vHeaders[headersIndex] && m_sNextLine!= "[ BASIC PARAMETERS ]") {
             getline(inFile, m_sNextLine);
             m_vValData[validationsIndex] = m_sNextLine;
-            validationsIndex++;
+            validationsIndex ++;
             headersIndex++;
         }
     }
+    //inFile.close();
 
-    //Data 
+    //inFile.open(sFileName);
+
+    //while (inFile >>nextDouble){
+    //    m_IEosCounter = (m_sNextLine == "-EOS-") ? m_IEosCounter += 1 : m_IEosCounter;
+    //    if (m_IEosCounter < 2) {
+    //        getline(inFile, m_sNextLine);
+
+    //    }
+    //    if (m_IEosCounter == 2) {
+    //        doubleData[i] = nextDouble;
+    //        i++;
+    //    }
+
+    //}
+    //inFile.close();
+
+    print(m_vValData);
+
+    //validation data
     unsigned m_vMaxThreads{ 10 };
     std::vector<int> m_vCodeLimits{ -5, 5 };
     std::vector<unsigned> m_vResolutionLimits{ 0 , 150 };
-    std::vector<std::string> m_vRetrieveType{ "DISTANCE", "DEPTH" };
+    std::vector<std::string> m_vRetrieveType{ "DISTANCE", "DEPTH"};
     std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };
     std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };
     std::vector<std::string> m_vMaxRadiusUnits{ "KM", "M" };
@@ -157,11 +194,11 @@ void CIni::validateFile()
     bool m_vValidationCheck = true;
 
     //[VERSION]
-    m_vValidationCheck = (m_vValData[0] == "2.7.8") ? 1 : 0;
+    m_vValidationCheck = ( m_vValData[0] == "2.7.8" ) ? 1 : 0;
     //[LOG FOLDER]
-    m_vValidationCheck = (m_vValData[1] == "--") ? 1 : 0;
+    m_vValidationCheck = (m_vValData[1]  ==  "--"   ) ? 1 : 0;
     //[ LOG FILE ]
-    m_vValidationCheck = (m_vValData[2] == "foder") ? 1 : 0;
+    m_vValidationCheck = (m_vValData[2]  == "foder" ) ? 1 : 0;
     //[ MAX THREADS ]
     m_vValidationCheck = (toInt(m_vValData[3]) >= 0 && toInt(m_vValData[3]) <= m_vMaxThreads) ? 1 : 0;
     //[ MIN CODE ]
@@ -179,4 +216,6 @@ void CIni::validateFile()
     //[ MAX RADIUS UNIT ]
     m_vValidationCheck = (toUpper(m_vValData[10]) == toUpper(m_vMaxRadiusUnits[0]) || toUpper(m_vValData[10]) == toUpper(m_vMaxRadiusUnits[1])) ? 1 : 0;
 
+
 }
+
