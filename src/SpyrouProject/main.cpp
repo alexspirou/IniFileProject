@@ -3,30 +3,38 @@
 
 
 
-
 int main() {
 
 	CIni iniObj;
 
 	std::string* userInput = NULL;
 	//userInput = new std::string();
-	iniObj.writeFile(userInput, iniObj.getHeaderValues());
-	if (iniObj.validateFile())
+	try
 	{
-		std::cout << "VALIDATION SUCCEED " << std::endl;
-		iniObj.writeLogFile(iniObj.getValidatedMsg(), 1);
+		iniObj.writeFile(userInput, iniObj.getHeaderValues());
+		if (iniObj.validateFile())
+		{
+			if (iniObj.getErrorHandler() == 0) throw - 1;
+			std::cout << "VALIDATION SUCCEED " << std::endl;
+			iniObj.writeLogFile(iniObj.getValidatedMsg(), 1);
+		}
+		else
+		{
+			std::cout << "VALIDATION FAILED " << std::endl;
+			iniObj.writeLogFile(iniObj.getNotValidatedMsg(), 1);
+			iniObj.readFile();
+			iniObj.writeFile(NULL, iniObj.getDefaultValues());
+		}
+		
+	}
+	catch (int e) 
+	{
+			iniObj.writeLogFile("File read / write error occurred", 1);
+			iniObj.writeFile(NULL, iniObj.getDefaultValues());
+			std::cout << "here" << std::endl;
+			iniObj.writeLogFile("Default values", 1);
 
 	}
-	else
-	{
-		std::cout << "VALIDATION FAILED " << std::endl;
-		iniObj.writeLogFile(iniObj.getNotValidatedMsg(), 1);
-		iniObj.readFile();
-		iniObj.writeFile(NULL, iniObj.getDefaultValues());
-	}
-
-	delete userInput;
-
 	//std::string s ="-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0";
 	//std::string n = s;
 	//int i = 0;

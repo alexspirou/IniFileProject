@@ -20,6 +20,24 @@
 
 CIni::CIni()
 {
+    auto removeBrackets = [](std::vector<std::string>& v)
+    {
+        int i = 0;
+        for (auto s : v)
+        {
+            //Erase []
+            s.erase(std::remove(s.begin(), s.end(), '['), s.end());
+            s.erase(std::remove(s.begin(), s.end(), ']'), s.end());
+            //Assign to the vector
+            v[i] = s;
+            i++;
+        }
+        return v;
+    };
+
+    writeLogFile("\n", 0);
+    outFile <<"\n" << std::setfill('-') << std::setw(100) << std::endl;
+
     createLogFile();
     readFile();
     //Resize vector with header's vector size - section names(2)
@@ -31,16 +49,18 @@ CIni::CIni()
     m_vHeaderValues[2] = m_sLogFilePath + "\\" + m_sLogFileName;                        //[ LOG FILE ]
     m_vHeaderValues[3] = "1";                                                           //[ MAX THREADS ]
     m_vHeaderValues[4] = "3";                                                           //[ MIN CODE ]
-    m_vHeaderValues[5] = "2";                                                           //[ MAX CODE ]
+    m_vHeaderValues[5] = "[2]";                                                           //[ MAX CODE ]
     m_vHeaderValues[6] = "73";                                                          //[ RESOLUTION ]
     m_vHeaderValues[7] = "DEPTH";                                                       //[ RETRIEVE TYPE ]
     m_vHeaderValues[8] = "BASIC";                                                       //[ COVERAGE MAP ALGORITHM ]
     m_vHeaderValues[9] = "NO";                                                          //[ IGNORE TX WITH MISSING LOSSES ]
-    m_vHeaderValues[10] = "m";                                                          //[ MAX RADIUS UNIT ]
+    m_vHeaderValues[10] = "KM";                                                          //[ MAX RADIUS UNIT ]
     m_vHeaderValues[11] = "-106.0,100,150.0,10000.0";                                   //[ BASIC PARAMETERS ]
 
+    //Remove brackets if exist
+    m_vHeaderValues = removeBrackets(m_vHeaderValues);
 
-    //Resize vector with header's vector - section names (2)
+    //Resize vector with header's vector size - section names size (2)
     m_vDefaultValues.resize(m_vHeaders.size() - m_vSectionNames.size());
     //Default values if validation failed
     m_vDefaultValues[0] = "2.7.8";                                                       //[ VERSION ]
@@ -55,6 +75,9 @@ CIni::CIni()
     m_vDefaultValues[9] = "YES";                                                         //[ IGNORE TX WITH MISSING LOSSES ]
     m_vDefaultValues[10] = "km";                                                         //[ MAX RADIUS UNIT ]
     m_vDefaultValues[11] = "-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0"; //[ BASIC PARAMETERS ]
+    
+    //Remove brackets if exist
+    m_vDefaultValues = removeBrackets(m_vHeaderValues);
 
 }
 
@@ -98,11 +121,12 @@ void CIni::createLogFile()
 
 void CIni::writeLogFile(std::string msg, bool bTime)
 {
+
     //Get the current time and date
     auto currentTime = []()
     {
+        //Take the time at this moment
         time_t now = time(0);
-
         // convert to string 
         char* dt = ctime(&now);
         return dt;
@@ -112,17 +136,19 @@ void CIni::writeLogFile(std::string msg, bool bTime)
     //Write  message
     if (bTime)
     {
-        outFile << std::setw(10) << std::left << msg << std::setw(70) << std::right << currentTime();
+        //Write the message to logfile
+        outFile << std::setw(10) << std::left << msg << std::setw(30 - msg.length() + 65) << std::right << currentTime();
     }
     else
     {
+        //Write a message withou time
         outFile << std::endl;
     }
     outFile.close();
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-///////////////////////////// PRIVATE ///////////////////////////////////////
+///////////////////////////// PUBLIC ///////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
@@ -137,29 +163,36 @@ void CIni::readFile()
     inFile.open(m_sIniFileName);
     while (getline(inFile, m_sNextLine))
     {
-        if (m_sNextLine.find(']') != std::string::npos) {
+        //Increased only if is inside in []
+        if (m_sNextLine.find('[') != std::string::npos && m_sNextLine.find(']') != std::string::npos) {
             m_szHeaderSize++;
         }
     }
     inFile.close();
 
+    //Resize with the number of headers names
     m_vHeaders.resize(m_szHeaderSize);
+
     inFile.open(m_sIniFileName);
     if (!inFile) {
         std::cerr << "error: not open" << std::endl;
     }
-    //read file//
+    //read file per line
 
     while (getline(inFile, m_sNextLine))
     {
-        if (m_sNextLine.find('[') != std::string::npos)
+        if (m_sNextLine.find('[') != std::string::npos && m_sNextLine.find(']') != std::string::npos)
         {
+            //Stores only if is inside in []
             m_vHeaders[i] = (m_sNextLine);
             i++;
         }
     }
     inFile.close();
+
+    //Send message to logfile
     writeLogFile(m_sReadMsg, 1);
+
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -174,14 +207,16 @@ void CIni::readFile()
 void CIni::writeFile(std::string* userInput, std::vector<std::string> m_vInputs)
 {
 
-
     //Find index of section name lambda
-    auto findSectionIndex = [](std::vector<std::string>& v, std::string& s)
+    auto findHeaderIndex = [](std::vector<std::string>& v, std::string& s)
     {
         int tempIndex{};
+        //Search vector for section name
         auto it = find(v.begin(), v.end(), s);
+
         if (it != v.end())
         {
+            //Finds the index
             tempIndex = it - v.begin();
         }
         return tempIndex;
@@ -198,46 +233,76 @@ void CIni::writeFile(std::string* userInput, std::vector<std::string> m_vInputs)
             os << vHeaders[currentIndex] << std::endl;
         }
     };
+
+    auto isDigit = [](char& c)
+    {
+        return std::isdigit(c);
+    };
     //Indices for vectors
     int j{ 0 };
     int i{ 0 };
 
-
     //Find the index that starts each section
-    indexSectionA = findSectionIndex(m_vHeaders, m_vSectionNames[0]);
-    indexSectionB = findSectionIndex(m_vHeaders, m_vSectionNames[1]);
-    //outFile << m_vHeaders[i] << std::endl;
+    m_iIndexSectionA = findHeaderIndex(m_vHeaders, m_vSectionNames[0]);
+    m_iIndexSectionB = findHeaderIndex(m_vHeaders, m_vSectionNames[1]);
+    //find section which is a integer
+    int m_iIndexMaxThreads = findHeaderIndex(m_vHeaders, m_vInputIntOnly[0]);
+    int m_iIndexMinCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[1]);
+    int m_iIndexMaxCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[2]);
+    int m_iIndexResolution = findHeaderIndex(m_vHeaders, m_vInputIntOnly[3]);
 
-    //Open file
+    //Open file in replace mode
     outFile.open(m_sIniFileName, std::ofstream::trunc);
     //Iterate through whole file
     while (outFile && i < m_vHeaders.size())
     {
-        if (m_vHeaders[i] == "[ -GENERAL SECTION- ]")
+        std::string m_sTempString;
+        if (m_vHeaders[i] == m_sFirstHeaderName)
         {
+            //Write the .ini file and icrease index by one to reach next header name
             outFile << m_vHeaders[i] << std::endl;
             i++;
+
         }
         //Program's input
         if (userInput == NULL)
         {
-            outFile << m_vHeaders[i] << "\n" << m_vInputs[j] << std::endl;
-            //Write -EOS- before new section
 
-            //Incre
+            //Write to the .ini file the headers names and the values
+            outFile << m_vHeaders[i] << "\n" << m_vInputs[j] << std::endl;
             j++;
         }
         //User's input
         else
         {
+
             //Check if index = section names to increase by 1
-            i = (i == indexSectionA || i == indexSectionB) ? i += 1 : i;
+            i = (i == m_iIndexSectionA || i == m_iIndexSectionB) ? i += 1 : i;
             std::cout << m_vHeaders[i] << std::endl;
-            std::cin >> *userInput;
-            outFile << m_vHeaders[i] << "\n" << *userInput << std::endl;
+            if (i == m_iIndexMaxThreads || i == m_iIndexMinCode || i == m_iIndexMaxCode || i == m_iIndexResolution)
+            {
+                std::getline(std::cin, m_sTempString);
+
+                while (!std::all_of(m_sTempString.begin(), m_sTempString.end(), isDigit))
+                {
+                    std::cout << "Iput must be an integer. " << std::endl;
+                    std::cout << m_vHeaders[i] << std::endl;
+                    std::getline(std::cin, m_sTempString);
+                }
+            
+            }
+            else
+            {
+                std::getline(std::cin, m_sTempString);
+
+            }
+            //Need a function to force some headers accept only integer
+
+            outFile << m_vHeaders[i] << "\n" << m_sTempString << std::endl;
+
         }
-        writeSectionHeader(m_vHeaders, outFile, indexSectionA, i);
-        writeSectionHeader(m_vHeaders, outFile, indexSectionB, i);
+        writeSectionHeader(m_vHeaders, outFile, m_iIndexSectionA, i);
+        writeSectionHeader(m_vHeaders, outFile, m_iIndexSectionB, i);
         i++;
     }
 
@@ -245,7 +310,6 @@ void CIni::writeFile(std::string* userInput, std::vector<std::string> m_vInputs)
     //Close file
     outFile.close();
     writeLogFile(m_sWriteMsg, 1);
-
 }
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
@@ -288,8 +352,8 @@ bool CIni::validateFile()
     int m_IEosCounter{ 0 };
 
     //Delete section headers and resize vector
-    m_vHeaders.erase(m_vHeaders.begin() + indexSectionB);
-    m_vHeaders.erase(m_vHeaders.begin() + indexSectionA);
+    m_vHeaders.erase(m_vHeaders.begin() + m_iIndexSectionB);
+    m_vHeaders.erase(m_vHeaders.begin() + m_iIndexSectionA);
     m_vHeaders.erase(m_vHeaders.begin() + 0);
 
     //Resize with new size of m_vHeaders vector
@@ -319,14 +383,14 @@ bool CIni::validateFile()
 
     //Validated Restrictions 
 
-    std::vector<unsigned> m_vVersionLimits{ 270, 280 };                                 //[ VERSION ]
-    unsigned m_vMaxThreads{ 10 };                                                       //[ MAX THREADS ]
-    std::vector<int> m_vCodeLimits{ -5, 5 };                                            //[ MIN CODE ] [ MAX CODE ]
-    std::vector<unsigned> m_vResolutionLimits{ 0 , 150 };                               //[ RESOLUTION ]
-    std::vector<std::string> m_vRetrieveType{ "DISTANCE", "DEPTH" };                    //[ RETRIEVE TYPE ]
-    std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };                 //[ COVERAGE MAP ALGORITHM ]
-    std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };                      //[ IGNORE TX WITH MISSING LOSSES ]
-    std::vector<std::string> m_vMaxRadiusUnits{ "KM", "M" };                            //[ MAX RADIUS UNIT ]
+    std::vector<unsigned> m_vVersionLimits          { 270, 280 };                      //[ VERSION ]
+    unsigned m_vMaxThreads                          { 10 };                            //[ MAX THREADS ]
+    std::vector<int> m_vCodeLimits                  { -5, 5 };                         //[ MIN CODE ] [ MAX CODE ]
+    std::vector<unsigned> m_vResolutionLimits       { 0 , 150 };                       //[ RESOLUTION ]
+    std::vector<std::string> m_vRetrieveType        { "DISTANCE", "DEPTH" };           //[ RETRIEVE TYPE ]
+    std::vector<std::string> m_vCoverMapAlgorithm   { "BASIC", "CUSTOM" };             //[ COVERAGE MAP ALGORITHM ]
+    std::vector<std::string> m_vIgnoreMissignLoses  { "YES", "NO" };                   //[ IGNORE TX WITH MISSING LOSSES ]
+    std::vector<std::string> m_vMaxRadiusUnits      { "km", "m" };                     //[ MAX RADIUS UNIT ]
 
     std::vector<bool> m_vValidationCheck(m_vValData.size() - 1);
     //[VERSION]
@@ -351,16 +415,26 @@ bool CIni::validateFile()
     m_vValidationCheck[9] = (toUpper(m_vValData[9]) == toUpper(m_vIgnoreMissignLoses[0]) || toUpper(m_vValData[9]) == toUpper(m_vIgnoreMissignLoses[1])) ? 1 : 0;
     //[ MAX RADIUS UNIT ]
     m_vValidationCheck[10] = (toUpper(m_vValData[10]) == toUpper(m_vMaxRadiusUnits[0]) || toUpper(m_vValData[10]) == toUpper(m_vMaxRadiusUnits[1])) ? 1 : 0;
+    //[ BASIC PARAMETERS ]
+    m_vValidationCheck[11] = ((m_vValData[11]) == m_vHeaderValues[11]) ? 1 : 0;
+
+
 
     bool m_bFlag = true;
-
+ 
     for (auto isTrue : m_vValidationCheck)
     {
-        m_bFlag = (isTrue == false) ? false : m_bFlag;
-        std::cout << isTrue << std::endl;
+        //Check if at least one of elements is false and set it to a bool flag
+        m_bFlag = (isTrue != true) ? false : m_bFlag;
 
     }
-    return m_bFlag;
-    writeLogFile(m_sIniFileName, 1);
+    
+    //Write in the log file
+    writeLogFile(m_sIniFileName+ " validation", 1);
 
+    //Increase error handler in case that function complete
+    m_iErrorHandler++;
+
+    //return the flag
+    return m_bFlag;
 }
