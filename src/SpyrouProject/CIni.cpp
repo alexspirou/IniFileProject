@@ -1,44 +1,73 @@
 #define _CRT_SECURE_NO_WARNINGS
-#include "CIni.h"
 #include <algorithm>
 #include <ctime>
 #include <windows.h>
 #include <iomanip>
+#include "CIni.h"
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////// 
+//--------------------------------------------------------------------------------//
+// CIni
+//--------------------------------------------------------------------------------//
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////// 
 
-//TO DO FOR TOMORROW
-//DEFAULT VALUES, VALID VERSION, VALID BASIC PARAMWETERS, TRY CATCH ERRORS, USER INPUT IF ITS POSSIBLE, MAKE CODE LOOK BETTER
-CIni::CIni() 
-{  
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+///////////////////////////// PUBLIC ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+CIni::CIni()
+{
     createLogFile();
     readFile();
+    //Resize vector with header's vector size - section names(2)
     m_vHeaderValues.resize(m_vHeaders.size() - m_vSectionNames.size());
 
     //Values for each section
-    m_vHeaderValues[0] = "2.7.8"; // [VERSION]
-    m_vHeaderValues[1] = m_sLogFilePath;    //[LOG FOLDER]
-    m_vHeaderValues[2] = m_sLogFilePath + "\\" + m_sLogFileName;  //[LOG FILE]
-    m_vHeaderValues[3] = "1";      //[MAX THREADS]
-    m_vHeaderValues[4] = "-1"; //[MIN CODE]
-    m_vHeaderValues[5] = "-1"; //[MAX CODE]
-    m_vHeaderValues[6] = "100"; //[RESOLUTION]
-    m_vHeaderValues[7] = "DISTANCE"; //[RETRIEVE TYPE]
-    m_vHeaderValues[8] = "BASIC"; //[COVERAGE MAP ALGORITHM]
-    m_vHeaderValues[9] = "YES"; //[IGNORE TX WITH MISSING LOSSES]
-    m_vHeaderValues[10] = "km"; //[MAX RADIUS UNIT]
-    m_vHeaderValues[11] = "-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0"; //[BASIC PARAMETERS]
-    //std::string* s = new std::string();
-    //s = NULL;
-    //writeFile(s, m_vHeaderValues);
-    //if (validateFile())
-    //{
-    //    writeLogFile(m_sValidatedMsg);
+    m_vHeaderValues[0] = "2.7.5";                                                       //[ VERSION ]
+    m_vHeaderValues[1] = m_sLogFilePath;                                                //[ LOG FOLDER ]
+    m_vHeaderValues[2] = m_sLogFilePath + "\\" + m_sLogFileName;                        //[ LOG FILE ]
+    m_vHeaderValues[3] = "1";                                                           //[ MAX THREADS ]
+    m_vHeaderValues[4] = "3";                                                           //[ MIN CODE ]
+    m_vHeaderValues[5] = "2";                                                           //[ MAX CODE ]
+    m_vHeaderValues[6] = "73";                                                          //[ RESOLUTION ]
+    m_vHeaderValues[7] = "DEPTH";                                                       //[ RETRIEVE TYPE ]
+    m_vHeaderValues[8] = "BASIC";                                                       //[ COVERAGE MAP ALGORITHM ]
+    m_vHeaderValues[9] = "NO";                                                          //[ IGNORE TX WITH MISSING LOSSES ]
+    m_vHeaderValues[10] = "m";                                                          //[ MAX RADIUS UNIT ]
+    m_vHeaderValues[11] = "-106.0,100,150.0,10000.0";                                   //[ BASIC PARAMETERS ]
 
-    //}
-    //else
-    //{
-    //    writeLogFile(m_sNotValidatedMsg);
-    //}
+
+    //Resize vector with header's vector - section names (2)
+    m_vDefaultValues.resize(m_vHeaders.size() - m_vSectionNames.size());
+    //Default values if validation failed
+    m_vDefaultValues[0] = "2.7.8";                                                       //[ VERSION ]
+    m_vDefaultValues[1] = "--";                                                          //[ LOG FOLDER ]
+    m_vDefaultValues[2] = "C:\\Log\LogFile.dbg";                                         //[ LOG FILE ]
+    m_vDefaultValues[3] = "1";                                                           //[ MAX THREADS ]
+    m_vDefaultValues[4] = "-1";                                                          //[ MIN CODE ]
+    m_vDefaultValues[5] = "-1";                                                          //[ MAX CODE ]
+    m_vDefaultValues[6] = "100";                                                         //[ RESOLUTION ]
+    m_vDefaultValues[7] = "DISTANCE";                                                    //[ RETRIEVE TYPE ]
+    m_vDefaultValues[8] = "BASIC";                                                       //[ COVERAGE MAP ALGORITHM ]
+    m_vDefaultValues[9] = "YES";                                                         //[ IGNORE TX WITH MISSING LOSSES ]
+    m_vDefaultValues[10] = "km";                                                         //[ MAX RADIUS UNIT ]
+    m_vDefaultValues[11] = "-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0"; //[ BASIC PARAMETERS ]
+
 }
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+///////////////////////////// PRIVATE ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+// Create the log folder and the log file if it doesn't exist
+/////////////////////////////////////////////////////////////////////////////
+
 void CIni::createLogFile()
 {
     //Create Log folder
@@ -57,8 +86,17 @@ void CIni::createLogFile()
 
     outFile.close();
 }
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+///////////////////////////// PUBLIC ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
-void CIni::writeLogFile(std::string msg)
+/////////////////////////////////////////////////////////////////////////////
+// Write events and the current date/time  in the log file 
+/////////////////////////////////////////////////////////////////////////////
+
+void CIni::writeLogFile(std::string msg, bool bTime)
 {
     //Get the current time and date
     auto currentTime = []()
@@ -72,24 +110,40 @@ void CIni::writeLogFile(std::string msg)
     //Open Log File
     outFile.open(m_sLogFileFullPath, std::ios_base::app | std::ios_base::out);
     //Write  message
-    outFile << std::setw(10) << std::left << msg << std::setw(60) << std::right << currentTime();
-  
+    if (bTime)
+    {
+        outFile << std::setw(10) << std::left << msg << std::setw(70) << std::right << currentTime();
+    }
+    else
+    {
+        outFile << std::endl;
+    }
     outFile.close();
 }
-void CIni::readFile() 
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+///////////////////////////// PRIVATE ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+// Read the .ini file and store the headers in a vector
+/////////////////////////////////////////////////////////////////////////////
+void CIni::readFile()
 {
-    int headersIndex = { 0 };
+
+    int i = { 0 };
     //count header vector size
     inFile.open(m_sIniFileName);
     while (getline(inFile, m_sNextLine))
     {
         if (m_sNextLine.find(']') != std::string::npos) {
-            headerSize++;
+            m_szHeaderSize++;
         }
     }
     inFile.close();
 
-    m_vHeaders.resize(headerSize);
+    m_vHeaders.resize(m_szHeaderSize);
     inFile.open(m_sIniFileName);
     if (!inFile) {
         std::cerr << "error: not open" << std::endl;
@@ -98,83 +152,111 @@ void CIni::readFile()
 
     while (getline(inFile, m_sNextLine))
     {
-        if (m_sNextLine.find('[') != std::string::npos) 
+        if (m_sNextLine.find('[') != std::string::npos)
         {
-            m_vHeaders[headersIndex] = (m_sNextLine);
-            headersIndex++;
+            m_vHeaders[i] = (m_sNextLine);
+            i++;
         }
     }
     inFile.close();
-    writeLogFile(m_sReadMsg);
+    writeLogFile(m_sReadMsg, 1);
 }
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+///////////////////////////// PUBLIC ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+
+/////////////////////////////////////////////////////////////////////////////
+// Write to the .ini file the desirable data either from program or user
+/////////////////////////////////////////////////////////////////////////////
 
 void CIni::writeFile(std::string* userInput, std::vector<std::string> m_vInputs)
 {
-    //Indices for vectors
-    int j{ 0 };
-    int i{ 0 };
+
 
     //Find index of section name lambda
     auto findSectionIndex = [](std::vector<std::string>& v, std::string& s)
     {
-    int tempIndex{};
-    auto it = find(v.begin(), v.end(), s);
-    if (it != v.end())
-    {
-        tempIndex = it - v.begin();
-    }
-    return tempIndex;
+        int tempIndex{};
+        auto it = find(v.begin(), v.end(), s);
+        if (it != v.end())
+        {
+            tempIndex = it - v.begin();
+        }
+        return tempIndex;
     };
-    auto writeSectionHeader = [](std::vector<std::string>& v, std::ostream& os, int sectionIndex, int& currentIndex)
+    auto writeSectionHeader = [](std::vector<std::string>& vHeaders, std::ostream& os, int sectionIndex, int& currentIndex)
     {
         //Check the previous header than section header
         if (currentIndex == sectionIndex - 1)
         {
             //Write -EOS-
-            os << "-EOS-\n" << "ddd\n";
+            os << "-EOS-\n" << "\n";
             //Increase index +1 to get the section header and write it
             currentIndex++;
-            os << v[currentIndex] << std::endl;
+            os << vHeaders[currentIndex] << std::endl;
         }
     };
+    //Indices for vectors
+    int j{ 0 };
+    int i{ 0 };
 
-    //Find the index of start of each section
+
+    //Find the index that starts each section
     indexSectionA = findSectionIndex(m_vHeaders, m_vSectionNames[0]);
     indexSectionB = findSectionIndex(m_vHeaders, m_vSectionNames[1]);
-
-
-
+    //outFile << m_vHeaders[i] << std::endl;
 
     //Open file
     outFile.open(m_sIniFileName, std::ofstream::trunc);
     //Iterate through whole file
-    while (outFile && i < m_vHeaders.size()) 
+    while (outFile && i < m_vHeaders.size())
     {
+        if (m_vHeaders[i] == "[ -GENERAL SECTION- ]")
+        {
+            outFile << m_vHeaders[i] << std::endl;
+            i++;
+        }
         //Program's input
-        if (userInput == NULL) {
+        if (userInput == NULL)
+        {
             outFile << m_vHeaders[i] << "\n" << m_vInputs[j] << std::endl;
             //Write -EOS- before new section
-            writeSectionHeader(m_vHeaders, outFile, indexSectionA, i);
-            writeSectionHeader(m_vHeaders, outFile, indexSectionB, i);
-            i++; j++;
+
+            //Incre
+            j++;
         }
         //User's input
-        else {
-            i = (i == indexSectionA || i == indexSectionB) ? i += 1: i;
+        else
+        {
+            //Check if index = section names to increase by 1
+            i = (i == indexSectionA || i == indexSectionB) ? i += 1 : i;
             std::cout << m_vHeaders[i] << std::endl;
             std::cin >> *userInput;
             outFile << m_vHeaders[i] << "\n" << *userInput << std::endl;
-            i++;
         }
+        writeSectionHeader(m_vHeaders, outFile, indexSectionA, i);
+        writeSectionHeader(m_vHeaders, outFile, indexSectionB, i);
+        i++;
     }
 
     outFile << "-EOS-" << "\n" << "-EOF-" << std::endl;
     //Close file
     outFile.close();
-    writeLogFile(m_sWriteMsg);
+    writeLogFile(m_sWriteMsg, 1);
 
 }
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+///////////////////////////// PUBLIC ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 
+/////////////////////////////////////////////////////////////////////////////
+// Read the .ini file, store the values and validate them, retunrs true if the
+// validation is succesfull
+/////////////////////////////////////////////////////////////////////////////
 bool CIni::validateFile()
 {
     //Validate
@@ -192,6 +274,14 @@ bool CIni::validateFile()
         return s;
     };
 
+    //Trasnform version to int
+    auto toIntDot = [](std::string s)
+    {
+        s.erase(std::remove(s.begin(), s.end(), '.'), s.end());
+        int temp = stoi(s);
+        return temp;
+    };
+
     //Indices for vectors and counter for -EOS-
     int i{ 0 };
     int j{ 0 };
@@ -200,42 +290,47 @@ bool CIni::validateFile()
     //Delete section headers and resize vector
     m_vHeaders.erase(m_vHeaders.begin() + indexSectionB);
     m_vHeaders.erase(m_vHeaders.begin() + indexSectionA);
-    m_vValData.resize(m_vHeaders.size());
+    m_vHeaders.erase(m_vHeaders.begin() + 0);
+
+    //Resize with new size of m_vHeaders vector
+    m_vValData.resize(m_vHeaders.size() +1);
 
     inFile.open(m_sIniFileName);
-    
+
     //Store the data
-    while (getline(inFile, m_sNextLine)) 
+    while (getline(inFile, m_sNextLine))
     {
         //Counter for -EOS-
         m_IEosCounter = (m_sNextLine == "-EOS-") ? m_IEosCounter += 1 : m_IEosCounter;
-        if (m_IEosCounter >= 3) 
+        if (m_IEosCounter >= 3)
         {
             break;
         }
         //Change line when the header has the same value and store the data
         if (m_sNextLine == m_vHeaders[j])
         {
+            //Change line to access the values instead of headers
             getline(inFile, m_sNextLine);
+            //Store the data in the vector
             m_vValData[i] = m_sNextLine;
-            i++;
-            j++;
+            i++; j++;
         }
     }
 
-    //Data 
-    
-    unsigned m_vMaxThreads{ 10 };
-    std::vector<int> m_vCodeLimits{ -5, 5 };
-    std::vector<unsigned> m_vResolutionLimits{ 0 , 150 };
-    std::vector<std::string> m_vRetrieveType{ "DISTANCE", "DEPTH" };
-    std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };
-    std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };
-    std::vector<std::string> m_vMaxRadiusUnits{ "KM", "M" };
+    //Validated Restrictions 
 
-    std::vector<bool> m_vValidationCheck( m_vValData.size()-1);
+    std::vector<unsigned> m_vVersionLimits{ 270, 280 };                                 //[ VERSION ]
+    unsigned m_vMaxThreads{ 10 };                                                       //[ MAX THREADS ]
+    std::vector<int> m_vCodeLimits{ -5, 5 };                                            //[ MIN CODE ] [ MAX CODE ]
+    std::vector<unsigned> m_vResolutionLimits{ 0 , 150 };                               //[ RESOLUTION ]
+    std::vector<std::string> m_vRetrieveType{ "DISTANCE", "DEPTH" };                    //[ RETRIEVE TYPE ]
+    std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };                 //[ COVERAGE MAP ALGORITHM ]
+    std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };                      //[ IGNORE TX WITH MISSING LOSSES ]
+    std::vector<std::string> m_vMaxRadiusUnits{ "KM", "M" };                            //[ MAX RADIUS UNIT ]
+
+    std::vector<bool> m_vValidationCheck(m_vValData.size() - 1);
     //[VERSION]
-    m_vValidationCheck[0] = (m_vValData[0] == "2.7.8") ? 1 : 0;
+    m_vValidationCheck[0] = (toIntDot(m_vValData[0]) >= m_vVersionLimits[0] && toIntDot(m_vValData[0]) <= m_vVersionLimits[1]) ? 1 : 0;
     //[LOG FOLDER]
     m_vValidationCheck[1] = (m_vValData[1] == m_sLogFilePath) ? 1 : 0;
     //[ LOG FILE ]
@@ -266,6 +361,6 @@ bool CIni::validateFile()
 
     }
     return m_bFlag;
-    writeLogFile(m_sIniFileName);
+    writeLogFile(m_sIniFileName, 1);
 
 }
