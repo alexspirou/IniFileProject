@@ -48,13 +48,13 @@ CIni::CIni()
     m_vHeaderValues[1] = m_sLogFilePath;                                                //[ LOG FOLDER ]
     m_vHeaderValues[2] = m_sLogFilePath + "\\" + m_sLogFileName;                        //[ LOG FILE ]
     m_vHeaderValues[3] = "1";                                                           //[ MAX THREADS ]
-    m_vHeaderValues[4] = "3";                                                           //[ MIN CODE ]
-    m_vHeaderValues[5] = "[2]";                                                           //[ MAX CODE ]
+    m_vHeaderValues[4] = "2";                                                           //[ MIN CODE ]
+    m_vHeaderValues[5] = "2";                                                           //[ MAX CODE ]
     m_vHeaderValues[6] = "73";                                                          //[ RESOLUTION ]
     m_vHeaderValues[7] = "DEPTH";                                                       //[ RETRIEVE TYPE ]
     m_vHeaderValues[8] = "BASIC";                                                       //[ COVERAGE MAP ALGORITHM ]
     m_vHeaderValues[9] = "NO";                                                          //[ IGNORE TX WITH MISSING LOSSES ]
-    m_vHeaderValues[10] = "KM";                                                          //[ MAX RADIUS UNIT ]
+    m_vHeaderValues[10] = "ksm";                                                          //[ MAX RADIUS UNIT ]
     m_vHeaderValues[11] = "-106.0,100,150.0,10000.0";                                   //[ BASIC PARAMETERS ]
 
     //Remove brackets if exist
@@ -76,8 +76,7 @@ CIni::CIni()
     m_vDefaultValues[10] = "km";                                                         //[ MAX RADIUS UNIT ]
     m_vDefaultValues[11] = "-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0"; //[ BASIC PARAMETERS ]
     
-    //Remove brackets if exist
-    m_vDefaultValues = removeBrackets(m_vHeaderValues);
+
 
 }
 

@@ -8,7 +8,8 @@ int main() {
 	CIni iniObj;
 
 	std::string* userInput = NULL;
-	//userInput = new std::string();
+	//userInput = new std::string(); 	//Uncomment for user input 
+
 	try
 	{
 		iniObj.writeFile(userInput, iniObj.getHeaderValues());
@@ -24,6 +25,8 @@ int main() {
 			iniObj.writeLogFile(iniObj.getNotValidatedMsg(), 1);
 			iniObj.readFile();
 			iniObj.writeFile(NULL, iniObj.getDefaultValues());
+			iniObj.writeLogFile("Default values", 1);
+
 		}
 		
 	}
