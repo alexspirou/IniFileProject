@@ -1,61 +1,92 @@
-
 #include "CIni.h"
-
-
 
 int main() {
 
 	CIni iniObj;
-
-	std::string* userInput = NULL;
-	//userInput = new std::string(); 	//Uncomment for user input 
-
 	try
 	{
-		iniObj.writeFile(userInput, iniObj.getHeaderValues());
+		//Write file
+		iniObj.writeFile(0, iniObj.getHeaderValues());
+
+		//Check for validation
 		if (iniObj.validateFile())
 		{
-			if (iniObj.getErrorHandler() == 0) throw - 1;
-			std::cout << "VALIDATION SUCCEED " << std::endl;
-			iniObj.writeLogFile(iniObj.getValidatedMsg(), 1);
+			//Print the result in console
+
+			std::cout << "Validation completed successfully  " << std::endl;
+			iniObj.writeLogFile("Validation completed successfully ", 1, 0);
 		}
 		else
 		{
-			std::cout << "VALIDATION FAILED " << std::endl;
-			iniObj.writeLogFile(iniObj.getNotValidatedMsg(), 1);
+			//Print the result in console
+			std::cout << "Validation failed " << std::endl;
+			iniObj.writeLogFile("Validation failed", 1, 0);
+
+			//Read file again
 			iniObj.readFile();
-			iniObj.writeFile(NULL, iniObj.getDefaultValues());
-			iniObj.writeLogFile("Default values", 1);
+			//Ask the user for new values
+			std::cout << "Enter the values : " << std::endl;
+			iniObj.writeFile(1, iniObj.getHeaderValues());
+
+			if (iniObj.getErrorHandler() == 0) { throw - 1; }
+
+			//Check for validation
+			if (!iniObj.validateFile())
+			{
+				std::cout << "Validation failed after the user's input" << std::endl;
+				//If it's not validated write default values
+				iniObj.writeLogFile("Validation failed after the user's input", 1, 0);
+				iniObj.readFile();
+				iniObj.writeFile(0, iniObj.getDefaultValues());
+				iniObj.writeLogFile("Default values", 1, 0);
+			}
+			else
+			{
+				//Validation succeed
+				std::cout << "Validation completed successfully after the user's input " << std::endl;
+				iniObj.writeLogFile("Validation completed successfully after the user's input ", 1, 0);
+			}
 
 		}
-		
 	}
-	catch (int e) 
+	catch (int e)
 	{
-			iniObj.writeLogFile("File read / write error occurred", 1);
-			iniObj.writeFile(NULL, iniObj.getDefaultValues());
-			std::cout << "here" << std::endl;
-			iniObj.writeLogFile("Default values", 1);
+		iniObj.writeLogFile("File read / write error occurred", 1, 0);
+		iniObj.writeFile(0, iniObj.getDefaultValues());
+		iniObj.writeLogFile("Default values", 1, 0);
 
 	}
-	//std::string s ="-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0";
-	//std::string n = s;
-	//int i = 0;
-
-	//while (i < n.size()) 
-	//{
-
-	//	auto it = std::find(s.begin(), s.end(), ',');
-	//	std::cout << *it << std::endl;
-	//	int a = it - s.begin();
-	//	if(i!=s.size())
-	//		s.replace(s.begin()+a, s.begin() + a+1, "");
-	//	i++;
-	//	std::cout << s << std::endl;
-	//	std::cout << a << std::endl;
-	//}
-
-	//n.append(s, 0,a);
 
 	return 0;
 }
+
+
+//Try for basic parameters string to double per comma
+// 
+//	std::string s ="100,2,3,45,6";
+//	std::string n{  };
+//	std::vector<std::string> sV{ 8 };
+//	int i = 0;
+//	int a = 0;
+//	int previous_a = 0;
+//	while (i < s.size()) 
+//	{
+//		//find the comma
+//		auto it = std::find(s.begin(), s.end(), ',');
+//		//std::cout << *it << std::endl;
+//		//store the index
+//		previous_a = a;
+
+//		a = it - s.begin();
+//		if (a != s.size()) {
+//			s.replace(s.begin() + a, s.begin() + a +1 , "");
+//			std::cout << n << std::endl;
+//			sV.push_back(n);
+//			std::cout << sV[i] << std::endl;
+//		}
+//		i++;
+
+//	}
+//	std::cout << "HERE" << std::endl;
+//		
+//}
