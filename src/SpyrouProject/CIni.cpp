@@ -3,7 +3,10 @@
 #include <ctime>
 #include <windows.h>
 #include <iomanip>
+#include <filesystem>
 #include "CIni.h"
+
+//namespace fs = std::filesystem;
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////// 
 //--------------------------------------------------------------------------------//
@@ -34,11 +37,12 @@ CIni::CIni()
         }
         return v;
     };
+    createLogFile();
 
     writeLogFile("\n", 0);
     outFile <<"\n" << std::setfill('-') << std::setw(100) << std::endl;
 
-    createLogFile();
+    //createLogFile();
     readFile();
     //Resize vector with header's vector size - section names(2)
     m_vHeaderValues.resize(m_vHeaders.size() - m_vSectionNames.size());
@@ -58,7 +62,7 @@ CIni::CIni()
     m_vHeaderValues[11] = "-106.0,100,150.0,10000.0";                                   //[ BASIC PARAMETERS ]
 
     //Remove brackets if exist
-    m_vHeaderValues = removeBrackets(m_vHeaderValues);
+    //m_vHeaderValues = removeBrackets(m_vHeaderValues);
 
     //Resize vector with header's vector size - section names size (2)
     m_vDefaultValues.resize(m_vHeaders.size() - m_vSectionNames.size());
@@ -95,7 +99,7 @@ void CIni::createLogFile()
     //Create Log folder
     std::string tempMkdir = "mkdir " + m_sLogFilePath;
     const char* m_sMkdirPath = tempMkdir.c_str();
-
+    //system(m_sMkdirPath);
     outFile.open(m_sLogFileFullPath, std::ios_base::app | std::ios_base::out);
 
     //Create the file if doesn't exist
@@ -244,7 +248,7 @@ void CIni::writeFile(std::string* userInput, std::vector<std::string> m_vInputs)
     //Find the index that starts each section
     m_iIndexSectionA = findHeaderIndex(m_vHeaders, m_vSectionNames[0]);
     m_iIndexSectionB = findHeaderIndex(m_vHeaders, m_vSectionNames[1]);
-    //find section which is a integer
+    //find header which is an integer
     int m_iIndexMaxThreads = findHeaderIndex(m_vHeaders, m_vInputIntOnly[0]);
     int m_iIndexMinCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[1]);
     int m_iIndexMaxCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[2]);
@@ -295,8 +299,6 @@ void CIni::writeFile(std::string* userInput, std::vector<std::string> m_vInputs)
                 std::getline(std::cin, m_sTempString);
 
             }
-            //Need a function to force some headers accept only integer
-
             outFile << m_vHeaders[i] << "\n" << m_sTempString << std::endl;
 
         }
