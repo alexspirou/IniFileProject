@@ -80,8 +80,6 @@ CIni::CIni()
     m_vDefaultValues[10] = "km";                                                         //[ MAX RADIUS UNIT ]
     m_vDefaultValues[11] = "-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0"; //[ BASIC PARAMETERS ]
 
-
-
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -100,7 +98,6 @@ void CIni::createLogFile()
     //Create Log folder
     std::string tempMkdir = "mkdir " + m_sLogFilePath;
     const char* m_sMkdirPath = tempMkdir.c_str();
-
 
     system(m_sMkdirPath);
     outFile.open(m_sLogFileFullPath, std::ios_base::app | std::ios_base::out);
@@ -137,8 +134,10 @@ void CIni::writeLogFile(std::string msg, bool bTime, bool bStartsEnd)
         char* dt = ctime(&now);
         return dt;
     };
+    
     //Open Log File
     outFile.open(m_sLogFileFullPath, std::ios_base::app | std::ios_base::out);
+    
     //Write  message
     if (bTime && !bStartsEnd)
     {
@@ -158,6 +157,7 @@ void CIni::writeLogFile(std::string msg, bool bTime, bool bStartsEnd)
     }
     outFile.close();
 }
+
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// PUBLIC ///////////////////////////////////////
@@ -167,6 +167,7 @@ void CIni::writeLogFile(std::string msg, bool bTime, bool bStartsEnd)
 /////////////////////////////////////////////////////////////////////////////
 // Read the .ini file and store the headers in a vector
 /////////////////////////////////////////////////////////////////////////////
+
 void CIni::readFile()
 {
     writeLogFile("Read has started", 1, 0);
@@ -402,14 +403,14 @@ bool CIni::validateFile()
 
     //Validated Restrictions 
 
-    std::vector<unsigned> m_vVersionLimits{ 270, 280 };                      //[ VERSION ]
-    unsigned m_vMaxThreads{ 10 };                            //[ MAX THREADS ]
-    std::vector<int> m_vCodeLimits{ -5, 5 };                         //[ MIN CODE ] [ MAX CODE ]
-    std::vector<unsigned> m_vResolutionLimits{ 0 , 150 };                       //[ RESOLUTION ]
-    std::vector<std::string> m_vRetrieveType{ "DISTANCE", "DEPTH" };           //[ RETRIEVE TYPE ]
-    std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };             //[ COVERAGE MAP ALGORITHM ]
-    std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };                   //[ IGNORE TX WITH MISSING LOSSES ]
-    std::vector<std::string> m_vMaxRadiusUnits{ "km", "m" };                     //[ MAX RADIUS UNIT ]
+    std::vector<unsigned> m_vVersionLimits{ 270, 280 };                     //[ VERSION ]
+    unsigned m_vMaxThreads{ 10 };                                           //[ MAX THREADS ]
+    std::vector<int> m_vCodeLimits{ -5, 5 };                                //[ MIN CODE ] [ MAX CODE ]
+    std::vector<unsigned> m_vResolutionLimits{ 0 , 150 };                   //[ RESOLUTION ]
+    std::vector<std::string> m_vRetrieveType{ "DISTANCE", "DEPTH" };        //[ RETRIEVE TYPE ]
+    std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };     //[ COVERAGE MAP ALGORITHM ]
+    std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };          //[ IGNORE TX WITH MISSING LOSSES ]
+    std::vector<std::string> m_vMaxRadiusUnits{ "km", "m" };                //[ MAX RADIUS UNIT ]
 
     //Write in the log file
     writeLogFile("Validation", 1, 0);
