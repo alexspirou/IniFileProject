@@ -12,7 +12,6 @@ int main() {
 		if (iniObj.validateFile())
 		{
 			//Print the result in console
-
 			std::cout << "Validation completed successfully  " << std::endl;
 			iniObj.writeLogFile("Validation completed successfully ", 1, 0);
 		}
@@ -24,6 +23,7 @@ int main() {
 
 			//Read file again
 			iniObj.readFile();
+			
 			//Ask the user for new values
 			std::cout << "Enter the values : " << std::endl;
 			iniObj.writeFile(1, iniObj.getHeaderValues());
@@ -34,6 +34,7 @@ int main() {
 			if (!iniObj.validateFile())
 			{
 				std::cout << "Validation failed after the user's input" << std::endl;
+				
 				//If it's not validated write default values
 				iniObj.writeLogFile("Validation failed after the user's input", 1, 0);
 				iniObj.readFile();
