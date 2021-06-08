@@ -22,10 +22,10 @@ public:
 	CIni();
 	~CIni() { writeLogFile("Program has stopped", 1, 1); }
 	//File operations
-	void writeLogFile(std::string msg, bool bTime, bool startsEnd);						//Write the events to logfile
-	void readFile();											//Read the file and store the values
-	void writeFile(bool userInput, std::vector<std::string> m_vInputs);					//Write to .ini file 
-	bool validateFile();											//Validate the file returns true if it's validated
+	void writeLogFile(std::string msg, bool bTime, bool startsEnd);				//Write the events to logfile
+	void readFile();									//Read the file and store the values
+	void writeFile(bool userInput, std::vector<std::string> m_vInputs);			//Write to .ini file 
+	bool validateFile();									//Validate the file returns true if it's validated
 
 	//Getters
 
@@ -37,7 +37,7 @@ public:
 private:
 
 	//File operations
-	void createLogFile();																//Creates a log folder and file if it doesn't exist
+	void createLogFile();									//Creates a log folder and file if it doesn't exist
 
 	//File in/out objects
 	std::ifstream inFile{};
