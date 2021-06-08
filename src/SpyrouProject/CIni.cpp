@@ -51,7 +51,7 @@ CIni::CIni()
     m_vHeaderValues[0] = "2.7.8";                                                       //[ VERSION ]
     m_vHeaderValues[1] = m_sLogFilePath;                                                //[ LOG FOLDER ]
     m_vHeaderValues[2] = m_sLogFilePath + "\\" + m_sLogFileName;                        //[ LOG FILE ]
-    m_vHeaderValues[3] = "2";                                                           //[ MAX THREADS ]
+    m_vHeaderValues[3] = "3";                                                           //[ MAX THREADS ]
     m_vHeaderValues[4] = "1";                                                           //[ MIN CODE ]
     m_vHeaderValues[5] = "2";                                                           //[ MAX CODE ]
     m_vHeaderValues[6] = "150";                                                         //[ RESOLUTION ]
@@ -257,7 +257,9 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
     writeLogFile("Write has started", 1, 0);
 
     //Indices for vectors
+    //Header
     int j{ 0 };
+    //Values
     int i{ 0 };
 
     //Find the index that starts each section
@@ -269,8 +271,9 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
     int m_iIndexMinCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[1]);
     int m_iIndexMaxCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[2]);
     int m_iIndexResolution = findHeaderIndex(m_vHeaders, m_vInputIntOnly[3]);
-
-    //int m_iIndexVersion = findHeaderIndex(m_vHeaders, m_sVersionHeader);
+    
+    //Find version index
+    int m_iIndexVersion = findHeaderIndex(m_vHeaders, m_sVersionHeader);
 
     //Open file in replace mode
     outFile.open(m_sIniFileName, std::ofstream::trunc);
@@ -295,8 +298,14 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
         //User's input
         else
         {
-            //Check if index = section names or version header to increase by 1 to skip 
-            i = (i == m_iIndexSectionA || i == m_iIndexSectionB) ? i += 1 : i;
+            //Check if the header is version to write header and the program's value
+            if (i == m_iIndexVersion)
+            {
+                outFile << m_vHeaders[i] << "\n" << m_vHeaderValues[0] << std::endl;
+            }
+            //Check if index = section names or version header to increase by 1 to skip them
+            i = (i == m_iIndexSectionA || i == m_iIndexSectionB || i == m_iIndexVersion) ? i += 1 : i;
+
             //Print in console the header names
             std::cout << m_vHeaders[i] << std::endl;
 
@@ -315,12 +324,17 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
             }
             else
             {
+                //If the input have not to be an integer
                 std::getline(std::cin, m_sUserInput);
 
             }
+            //Write the header and values
             outFile << m_vHeaders[i] << "\n" << m_sUserInput << std::endl;
 
         }
+        //Write the section names
+        
+
         writeSectionHeader(m_vHeaders, outFile, m_iIndexSectionA, i);
         writeSectionHeader(m_vHeaders, outFile, m_iIndexSectionB, i);
         i++;
@@ -453,7 +467,7 @@ bool CIni::validateFile()
     }
 
     //Increase error handler in case that function complete
-    m_iErrorHandler++;
+    //m_iErrorHandler++;
 
     //return the flag
     return m_bFlag;
