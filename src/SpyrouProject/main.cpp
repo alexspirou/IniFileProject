@@ -35,10 +35,10 @@ int main() {
 		}
 		catch (int e)
 		{
-			//If error handler != 0 pass default values
-			iniObj.writeLogFile("File read / write error occurred", 1, 0);
-			iniObj.writeFile(0, iniObj.getDefaultValues());
-			iniObj.writeLogFile("Default values", 1, 0);
+			////If error handler != 0 pass default values
+			//iniObj.writeLogFile("File read / write error occurred", 1, 0);
+			//iniObj.writeFile(0, iniObj.getDefaultValues());
+			//iniObj.writeLogFile("Default values", 1, 0);
 		}
 
 		//Check for validation
@@ -64,34 +64,3 @@ int main() {
 
 	return 0;
 }
-
-
-//Try for basic parameters string to double per comma
-// 
-//	std::string s ="100,2,3,45,6";
-//	std::string n{  };
-//	std::vector<std::string> sV{ 8 };
-//	int i = 0;
-//	int a = 0;
-//	int previous_a = 0;
-//	while (i < s.size()) 
-//	{
-//		//find the comma
-//		auto it = std::find(s.begin(), s.end(), ',');
-//		//std::cout << *it << std::endl;
-//		//store the index
-//		previous_a = a;
-
-//		a = it - s.begin();
-//		if (a != s.size()) {
-//			s.replace(s.begin() + a, s.begin() + a +1 , "");
-//			std::cout << n << std::endl;
-//			sV.push_back(n);
-//			std::cout << sV[i] << std::endl;
-//		}
-//		i++;
-
-//	}
-//	std::cout << "HERE" << std::endl;
-//		
-//}

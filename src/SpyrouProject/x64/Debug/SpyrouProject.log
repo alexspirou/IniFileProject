@@ -1,10 +1,23 @@
 ﻿  CIni.cpp
   The contents of <filesystem> are available only with C++17 or later.
-C:\Users\Alex\Desktop\final4\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(72,27): warning C4129: 'L': unrecognized character escape sequence
-C:\Users\Alex\Desktop\final4\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(235,28): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-C:\Users\Alex\Desktop\final4\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(433,54): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\Alex\Desktop\final4\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(433,104): warning C4018: '<=': signed/unsigned mismatch
-C:\Users\Alex\Desktop\final4\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(439,80): warning C4018: '<=': signed/unsigned mismatch
-C:\Users\Alex\Desktop\final4\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(445,51): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\Alex\Desktop\final4\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(445,103): warning C4018: '<=': signed/unsigned mismatch
-  SpyrouProject.vcxproj -> C:\Users\Alex\Desktop\final4\SpyrouAlexandrosProject\src\x64\Debug\SpyrouProject.exe
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(73,27): warning C4129: 'L': unrecognized character escape sequence
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(236,28): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(386,29): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(436,17): warning C4244: 'initializing': conversion from '_Ty' to 'int', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(439,44): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(447,17): warning C4244: 'initializing': conversion from '_Ty' to 'int', possible loss of data
+          with
+          [
+              _Ty=double
+          ]
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(450,44): warning C4244: '=': conversion from 'double' to 'int', possible loss of data
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(533,54): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(533,104): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(539,80): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(545,51): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(545,103): warning C4018: '<=': signed/unsigned mismatch
+  SpyrouProject.vcxproj -> C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\x64\Debug\SpyrouProject.exe

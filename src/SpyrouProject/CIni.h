@@ -23,21 +23,21 @@ public:
 	~CIni() { writeLogFile("Program has stopped", 1, 1); }
 	//File operations
 	void writeLogFile(std::string msg, bool bTime, bool startsEnd);				//Write the events to logfile
-	void readFile();									//Read the file and store the values
+	void readFile();															//Read the file and store the values
 	void writeFile(bool userInput, std::vector<std::string> m_vInputs);			//Write to .ini file 
-	bool validateFile();									//Validate the file returns true if it's validated
+	bool validateFile();														//Validate the file returns true if it's validated
 
 	//Getters
 
 	inline std::vector<std::string>& getHeaderValues() { return m_vHeaderValues; }		//Getter for program values vector
 	inline std::vector<std::string>& getDefaultValues() { return m_vDefaultValues; }	//Getter for default values string				
-	inline int getErrorHandler() { return m_iErrorHandler; }				//Getter for error handler
+	inline int getErrorHandler() { return m_iErrorHandler; }							//Getter for error handler
 	//Setters
 	inline void setErrorHandler(int newError) { m_iErrorHandler = newError; }
 private:
 
 	//File operations
-	void createLogFile();									//Creates a log folder and file if it doesn't exist
+	void createLogFile();																//Creates a log folder and file if it doesn't exist
 
 	//File in/out objects
 	std::ifstream inFile{};

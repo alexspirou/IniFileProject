@@ -59,7 +59,8 @@ CIni::CIni()
     m_vHeaderValues[8] = "BASIC";                                                       //[ COVERAGE MAP ALGORITHM ]
     m_vHeaderValues[9] = "NO";                                                          //[ IGNORE TX WITH MISSING LOSSES ]
     m_vHeaderValues[10] = "km";                                                         //[ MAX RADIUS UNIT ]
-    m_vHeaderValues[11] = "-106.0,100,150.0,10000.0";                                   //[ BASIC PARAMETERS ]
+    m_vHeaderValues[11] = "-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0"; //[ BASIC PARAMETERS ]
+
 
     //Remove brackets if exist
     m_vHeaderValues = removeBrackets(m_vHeaderValues);
@@ -105,7 +106,7 @@ void CIni::createLogFile()
     {
         system(m_sMkdirPath);
         outFile.open(m_sLogFileFullPath, std::ios_base::app | std::ios_base::out);
-        outFile << "\n";
+        //outFile << "\n";
         outFile.close();
     }
 
@@ -146,7 +147,7 @@ void CIni::writeLogFile(std::string msg, bool bTime, bool bStartsEnd)
     else if (!bTime && !bStartsEnd)
     {
         //Write a message withou time
-        outFile << std::endl;
+        outFile <<  std::endl;
     }
     else
     {
@@ -236,6 +237,8 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
         }
         return tempIndex;
     };
+
+    //Write eos lambda
     auto writeSectionHeader = [](std::vector<std::string>& vHeaders, std::ostream& os, int sectionIndex, int& currentIndex)
     {
         //Check the previous header than section header
@@ -249,6 +252,7 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
         }
     };
 
+   //Check if 
     auto isDigit = [](char& c)
     {
         return std::isdigit(c);
@@ -357,6 +361,97 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
 bool CIni::validateFile()
 {
     //Validate
+    
+    //Array of string to double per  comma
+    auto toDouble = [](std::string stringToDouble)
+    {
+        //Try for basic parameters string to double per comma
+        std::vector <int> vPreviousComma;
+        //indices 
+        int i = 0;
+        //Previous comma
+        int prevIndexComma = 0;
+        //Next comma
+        int indexComma = 0;
+
+        while (i < stringToDouble.length())
+        {
+            //find the comma
+            auto it = std::find(stringToDouble.begin(), stringToDouble.end(), ',');
+
+            //store the previous state
+            prevIndexComma = indexComma;
+
+            //Count the difference
+            indexComma = it - stringToDouble.begin();
+
+            //Erase comma to find the next
+            if (indexComma <= stringToDouble.size())
+            {
+                stringToDouble.erase(stringToDouble.begin() + indexComma);
+            }
+            //Store the previous state
+            vPreviousComma.push_back(prevIndexComma);
+            //Set count as the previous state to exit the loop
+            i = prevIndexComma;
+        }
+        //Vector store the values without comma
+        std::vector<std::string> vStringDoubleValues(vPreviousComma.size());
+
+        //Index for vPreviousComma vector to start for the second element
+        i = 1;
+        int j = 0;
+        int prevState = 0;
+
+        //Outter loop equal the comma size
+        for (int x = 0; x < vPreviousComma.size() - 1; x++)
+        {
+            for (int in = prevState; in < vPreviousComma[i]; in++)
+            {
+                //Inner loop that store the value betwwen previous and next comma
+                vStringDoubleValues[j].push_back(stringToDouble[in]);
+                //Set current comma to previous comma
+                prevState = vPreviousComma[i];
+            }
+            //Increase index for previous comma vector and string vStringDoubleValues vector
+            i++; j++;
+        }
+
+        std::vector<double> vDoubleValues(vStringDoubleValues.size() - 1);
+        i = 0;
+
+        while (i < vDoubleValues.size())
+        {
+            //Conver to double and store to double vector
+            vDoubleValues[i] = stod(vStringDoubleValues[i]);
+            i++;
+        }
+
+        return vDoubleValues;
+    };
+
+    //Find max lambda
+    auto findMax = [](std::vector<double> doubleVec)
+    {
+        int max = doubleVec[0];
+        for (auto element : doubleVec)
+        {
+            max = (max <= element) ? max = element : max;
+        }
+        return max;
+    };
+
+    //Find min lambda
+    auto findMin = [](std::vector<double> doubleVec)
+    {
+        int min = doubleVec[0];
+        for (auto element : doubleVec)
+        {
+            min = (min >= element) ? min = element : min;
+        }
+        return min;
+    };
+
     //String to Int lambda
     auto toInt = [](std::string s)
     {
@@ -424,6 +519,11 @@ bool CIni::validateFile()
     std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };     //[ COVERAGE MAP ALGORITHM ]
     std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };          //[ IGNORE TX WITH MISSING LOSSES ]
     std::vector<std::string> m_vMaxRadiusUnits{ "km", "m" };                //[ MAX RADIUS UNIT ]
+    std::vector<double> m_vBasicParametersLimits{ 10001, -500, 14 };        //[ BASIC PARAMETERS ]
+    
+    //Find min max for check the basicparameters limits
+    double valueMax = findMax(toDouble(m_vValData[11]));
+    double valueMin = findMin(toDouble(m_vValData[11]));
 
     //Write in the log file
     writeLogFile("Validation", 1, 0);
@@ -452,9 +552,8 @@ bool CIni::validateFile()
     //[ MAX RADIUS UNIT ]
     m_vValidationCheck[10] = (toUpper(m_vValData[10]) == toUpper(m_vMaxRadiusUnits[0]) || toUpper(m_vValData[10]) == toUpper(m_vMaxRadiusUnits[1])) ? 1 : 0;
     //[ BASIC PARAMETERS ]
-    m_vValidationCheck[11] = ((m_vValData[11]) == m_vHeaderValues[11]) ? 1 : 0;
-
-
+    m_vValidationCheck[11] = (valueMax <= m_vBasicParametersLimits[0] && valueMin >= m_vBasicParametersLimits[1] && toDouble(m_vValData[11]).size() == m_vBasicParametersLimits[2]) ? 1 : 0;
+    
     bool m_bFlag = true;
     i = 0;
     for (auto isTrue : m_vValidationCheck)
