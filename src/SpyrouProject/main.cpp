@@ -55,7 +55,6 @@ int main() {
 		iniObj.writeLogFile("File read / write error occurred", 1, 0);
 		iniObj.writeFile(0, iniObj.getDefaultValues());
 		iniObj.writeLogFile("Default values", 1, 0);
-
 	}
 
 	return 0;
