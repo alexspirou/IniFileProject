@@ -433,7 +433,7 @@ bool CIni::validateFile()
     //Find max lambda
     auto findMax = [](std::vector<double> doubleVec)
     {
-        int max = doubleVec[0];
+        double max = doubleVec[0];
         for (auto element : doubleVec)
         {
             max = (max <= element) ? max = element : max;
@@ -444,7 +444,7 @@ bool CIni::validateFile()
     //Find min lambda
     auto findMin = [](std::vector<double> doubleVec)
     {
-        int min = doubleVec[0];
+        double min = doubleVec[0];
         for (auto element : doubleVec)
         {
             min = (min >= element) ? min = element : min;
@@ -519,7 +519,7 @@ bool CIni::validateFile()
     std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };     //[ COVERAGE MAP ALGORITHM ]
     std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };          //[ IGNORE TX WITH MISSING LOSSES ]
     std::vector<std::string> m_vMaxRadiusUnits{ "km", "m" };                //[ MAX RADIUS UNIT ]
-    std::vector<double> m_vBasicParametersLimits{ 10001, -500, 14 };        //[ BASIC PARAMETERS ]
+    std::vector<double> m_vBasicParametersLimits{ 10000, -500, 14 };        //[ BASIC PARAMETERS ]
     
     //Find min max for check the basicparameters limits
     double valueMax = findMax(toDouble(m_vValData[11]));
