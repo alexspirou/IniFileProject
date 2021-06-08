@@ -154,8 +154,7 @@ void CIni::writeLogFile(std::string msg, bool bTime, bool bStartsEnd)
     {
         //Write a message  when the app starts-stop
         outFile << std::setw(10) << std::left << msg << " " << std::setw(30 - msg.length() + m_sIniFileName.length() + 65) << std::right << currentTime();
-
-
+    
     }
     outFile.close();
 }
@@ -178,7 +177,8 @@ void CIni::readFile()
     while (getline(inFile, m_sNextLine))
     {
         //Increased only if is inside in []
-        if (m_sNextLine.find('[') != std::string::npos && m_sNextLine.find(']') != std::string::npos) {
+        if (m_sNextLine.find('[') != std::string::npos && m_sNextLine.find(']') != std::string::npos)
+        {
             m_szHeaderSize++;
         }
     }
@@ -188,7 +188,8 @@ void CIni::readFile()
     m_vHeaders.resize(m_szHeaderSize);
 
     inFile.open(m_sIniFileName);
-    if (!inFile) {
+    if (!inFile) 
+    {
         std::cerr << "error: not open" << std::endl;
     }
     //read file per line
@@ -262,6 +263,7 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
     //Find the index that starts each section
     m_iIndexSectionA = findHeaderIndex(m_vHeaders, m_vSectionNames[0]);
     m_iIndexSectionB = findHeaderIndex(m_vHeaders, m_vSectionNames[1]);
+    
     //find headers that take integer input
     int m_iIndexMaxThreads = findHeaderIndex(m_vHeaders, m_vInputIntOnly[0]);
     int m_iIndexMinCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[1]);
@@ -286,7 +288,6 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
         //Program's input
         if (userInput == NULL)
         {
-
             //Write to the .ini file the headers names and the values
             outFile << m_vHeaders[i] << "\n" << m_vInputs[j] << std::endl;
             j++;
@@ -294,7 +295,6 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
         //User's input
         else
         {
-
             //Check if index = section names or version header to increase by 1 to skip 
             i = (i == m_iIndexSectionA || i == m_iIndexSectionB) ? i += 1 : i;
             //Print in console the header names
@@ -325,7 +325,6 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
         writeSectionHeader(m_vHeaders, outFile, m_iIndexSectionB, i);
         i++;
     }
-
     outFile << "-EOS-" << "\n" << "-EOF-" << std::endl;
     //Close file
     outFile.close();
@@ -350,8 +349,8 @@ bool CIni::validateFile()
         int temp = stoi(s);
         return temp;
     };
+    
     //String to uppercase lambda
-
     auto toUpper = [](std::string s)
     {
         std::transform(s.begin(), s.end(), s.begin(), ::toupper);
@@ -449,6 +448,7 @@ bool CIni::validateFile()
 
         //Check if at least one of elements is false and set it to a bool flag
         m_bFlag = (isTrue != true) ? false : m_bFlag;
+        //Write the section name that is not valid
         if (!isTrue) { writeLogFile(m_vHeaders[i] + " header not valid", 1, 0); }
         i++;
     }
