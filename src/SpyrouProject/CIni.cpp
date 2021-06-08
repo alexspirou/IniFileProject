@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <ctime>
 #include <iomanip>
+#include <filesystem>
 #include "CIni.h"
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -93,17 +94,16 @@ CIni::CIni()
 
 void CIni::createLogFile()
 {
-
     //Create Log folder
     std::string tempMkdir = "mkdir " + m_sLogFilePath;
     const char* m_sMkdirPath = tempMkdir.c_str();
 
-    system(m_sMkdirPath);
     outFile.open(m_sLogFileFullPath, std::ios_base::app | std::ios_base::out);
 
     //Create the file if doesn't exist
     if (!outFile)
     {
+        system(m_sMkdirPath);
         outFile.open(m_sLogFileFullPath, std::ios_base::app | std::ios_base::out);
         outFile << "\n";
         outFile.close();
@@ -445,7 +445,6 @@ bool CIni::validateFile()
     i = 0;
     for (auto isTrue : m_vValidationCheck)
     {
-
         //Check if at least one of elements is false and set it to a bool flag
         m_bFlag = (isTrue != true) ? false : m_bFlag;
         //Write the section name that is not valid
@@ -458,6 +457,7 @@ bool CIni::validateFile()
 
     //return the flag
     return m_bFlag;
+
     writeLogFile("Validation completed", 1, 0);
 
 }
