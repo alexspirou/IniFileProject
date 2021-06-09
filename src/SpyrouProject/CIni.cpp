@@ -271,13 +271,13 @@ void CIni::writeFile(bool userInput, std::vector<std::string> m_vInputs)
     m_iIndexSectionB = findHeaderIndex(m_vHeaders, m_vSectionNames[1]);
     
     //find headers that take integer input
-    int m_iIndexMaxThreads = findHeaderIndex(m_vHeaders, m_vInputIntOnly[0]);
-    int m_iIndexMinCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[1]);
-    int m_iIndexMaxCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[2]);
-    int m_iIndexResolution = findHeaderIndex(m_vHeaders, m_vInputIntOnly[3]);
+    const int m_iIndexMaxThreads = findHeaderIndex(m_vHeaders, m_vInputIntOnly[0]);
+    const int m_iIndexMinCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[1]);
+    const int m_iIndexMaxCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[2]);
+    const int m_iIndexResolution = findHeaderIndex(m_vHeaders, m_vInputIntOnly[3]);
     
     //Find version index
-    int m_iIndexVersion = findHeaderIndex(m_vHeaders, m_sVersionHeader);
+    const int m_iIndexVersion = findHeaderIndex(m_vHeaders, m_sVersionHeader);
 
     //Open file in replace mode
     outFile.open(m_sIniFileName, std::ofstream::trunc);
@@ -511,19 +511,19 @@ bool CIni::validateFile()
 
     //Validated Restrictions 
 
-    std::vector<unsigned> m_vVersionLimits{ 270, 280 };                     //[ VERSION ]
-    unsigned m_vMaxThreads{ 10 };                                           //[ MAX THREADS ]
-    std::vector<int> m_vCodeLimits{ -5, 5 };                                //[ MIN CODE ] [ MAX CODE ]
-    std::vector<unsigned> m_vResolutionLimits{ 0 , 150 };                   //[ RESOLUTION ]
-    std::vector<std::string> m_vRetrieveType{ "DISTANCE", "DEPTH" };        //[ RETRIEVE TYPE ]
-    std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };     //[ COVERAGE MAP ALGORITHM ]
-    std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };          //[ IGNORE TX WITH MISSING LOSSES ]
-    std::vector<std::string> m_vMaxRadiusUnits{ "km", "m" };                //[ MAX RADIUS UNIT ]
-    std::vector<double> m_vBasicParametersLimits{ 10000, -500, 14 };        //[ BASIC PARAMETERS ]
+    const std::vector<unsigned> m_vVersionLimits{ 270, 280 };                     //[ VERSION ]
+    const unsigned m_vMaxThreads{ 10 };                                           //[ MAX THREADS ]
+    const std::vector<int> m_vCodeLimits{ -5, 5 };                                //[ MIN CODE ] [ MAX CODE ]
+    const std::vector<unsigned> m_vResolutionLimits{ 0 , 150 };                   //[ RESOLUTION ]
+    const std::vector<std::string> m_vRetrieveType{ "DISTANCE", "DEPTH" };        //[ RETRIEVE TYPE ]
+    const std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };     //[ COVERAGE MAP ALGORITHM ]
+    const std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };          //[ IGNORE TX WITH MISSING LOSSES ]
+    const std::vector<std::string> m_vMaxRadiusUnits{ "km", "m" };                //[ MAX RADIUS UNIT ]
+    const std::vector<double> m_vBasicParametersLimits{ 10000, -500, 14 };        //[ BASIC PARAMETERS ]
     
     //Find min max for check the basicparameters limits
-    double valueMax = findMax(toDouble(m_vValData[11]));
-    double valueMin = findMin(toDouble(m_vValData[11]));
+    const double valueMax = findMax(toDouble(m_vValData[11]));
+    const double valueMin = findMin(toDouble(m_vValData[11]));
 
     //Write in the log file
     writeLogFile("Validation", 1, 0);

@@ -34,6 +34,7 @@ public:
 	inline int getErrorHandler() { return m_iErrorHandler; }							//Getter for error handler
 	//Setters
 	inline void setErrorHandler(int newError) { m_iErrorHandler = newError; }
+
 private:
 
 	//File operations
