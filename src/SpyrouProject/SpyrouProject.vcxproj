@@ -140,10 +140,12 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="CIni.cpp" />
+    <ClCompile Include="COptions.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CIni.h" />
+    <ClInclude Include="COptions.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Application.ini" />

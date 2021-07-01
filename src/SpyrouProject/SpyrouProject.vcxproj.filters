@@ -21,6 +21,9 @@
     <ClCompile Include="CIni.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="COptions.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Application.ini">
@@ -29,6 +32,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CIni.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="COptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
