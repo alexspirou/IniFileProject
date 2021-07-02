@@ -1,1 +1,4 @@
-﻿  SpyrouProject.vcxproj -> C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\x64\Debug\SpyrouProject.exe
+﻿  CIni.cpp
+  The contents of <filesystem> are available only with C++17 or later.
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(206,28): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+  SpyrouProject.vcxproj -> C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\x64\Debug\SpyrouProject.exe

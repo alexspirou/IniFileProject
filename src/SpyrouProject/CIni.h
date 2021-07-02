@@ -19,7 +19,7 @@ class CIni
 public:
 	//Constructor/Destructor
 	CIni();
-	~CIni() { writeLogFile("Program has stopped", 1, 1); }
+	~CIni() { }
 	//File operations
 	void writeLogFile(std::string msg, bool bTime, bool startsEnd);				//Write the events to logfile
 	size_t readIniFile();														//Read the file and return the count of headers

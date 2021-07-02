@@ -292,9 +292,9 @@ bool COptions::isValid()
         }
         m_outFile.close();
     }
-
+    if (m_bFlag == true) { m_IniObj.writeLogFile("Validation completed", 1, 0); }
+    else { m_IniObj.writeLogFile("Validation failed", 1, 0); }
     //return the flag
     return m_bFlag;
-    m_IniObj.writeLogFile("Validation completed", 1, 0);
 
 }

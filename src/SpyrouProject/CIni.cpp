@@ -36,17 +36,16 @@ CIni::CIni()
         return v;
     };
     //File in/out objects
-    std::ifstream inFile{};
-    std::ofstream outFile{};
+    //std::ifstream inFile{};
+    //std::ofstream outFile{};
     //Create log file
-    createLogFile();
     //Enter \n for change the line from the last run
-    writeLogFile("\n", 0, 0);
-    outFile << "\n" << std::setfill('-') << std::setw(100) << std::endl;
-    writeLogFile("Program has started", 1, 1);
+    //writeLogFile("\n", 0, 0);
+    //outFile << "\n" << std::setfill('-') << std::setw(100) << std::endl;
+   
 
     //createLogFile();
-    readIniFile();
+    //readIniFile();
     //Resize vector with header's vector size - section names(2)
 
 
