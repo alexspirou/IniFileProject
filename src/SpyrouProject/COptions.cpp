@@ -23,8 +23,14 @@ COptions::COptions()
 ///////////////////////////// PUBLIC ///////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
-bool COptions::validate()
+/////////////////////////////////////////////////////////////////////////////
+// Read the .ini file, store the values and validate them. If the inputs are 
+// not valid, default values are written in .ini file. Return true if the in
+// -puts are valid.
+/////////////////////////////////////////////////////////////////////////////
+bool COptions::isValid()
 {
+    //File stream objects
     std::ifstream m_inFile{};
     std::ofstream m_outFile{};
     ////Validate
@@ -148,7 +154,7 @@ bool COptions::validate()
     //Next string for iterate the file
     std::string m_sNextLine{};
     //Vector for headers
-    size_t m_iHeadersSize = m_IniObj.readFile();
+    size_t m_iHeadersSize = m_IniObj.readIniFile();
     std::vector<std::string> m_vHeaders(m_iHeadersSize);
 
     //READ FILE
@@ -174,7 +180,6 @@ bool COptions::validate()
     unsigned m_IEosCounter{ 0 };
     indexHeader = 0;
 
-    //Open File
     m_inFile.open(m_sIniFileName);
 
     //Store the data
@@ -187,13 +192,12 @@ bool COptions::validate()
 
             break;
         }
+        //Skip when a header doesn't need an option
         if (m_sNextLine == "[ -GENERAL SECTION- ]" || m_sNextLine == "[ -A SECTION- ]" || m_sNextLine == "[ -B SECTION- ]")
         {
             getline(m_inFile, m_sNextLine);
             indexHeader++;
         }
-
-
         //Change line when the header has the same value and store the data
         if (m_sNextLine == m_vHeaders[indexHeader] )
         {
@@ -212,7 +216,7 @@ bool COptions::validate()
 
     const std::vector<unsigned> m_vVersionLimits{ 270, 280 };                     //[ VERSION ]
     const std::string m_sLogFolderPath{"C:\\Application_Log"};                    //[ LOG FOLDER ]
-    const std::string m_sLogFilePath{ "C:\\Application_Log\\Logfile.dbg"};        //[ LOG FILE ]                                                                                  //[ LOG FILE ]
+    const std::string m_sLogFilePath{ "C:\\Application_Log\\Logfile.dbg"};        //[ LOG FILE ]                                                                                 
     const unsigned m_vMaxThreads{ 10 };                                           //[ MAX THREADS ]
     const std::vector<int> m_vCodeLimits{ -5, 5 };                                //[ MIN CODE ] [ MAX CODE ]
     const std::vector<unsigned> m_vResolutionLimits{ 0 , 150 };                   //[ RESOLUTION ]
@@ -254,19 +258,17 @@ bool COptions::validate()
     m_vValidationCheck[10] = (toUpper(m_vValData[10]) == toUpper(m_vMaxRadiusUnits[0]) || toUpper(m_vValData[10]) == toUpper(m_vMaxRadiusUnits[1])) ? 1 : 0;
     //[ BASIC PARAMETERS ]
     m_vValidationCheck[11] = (valueMax <= m_vBasicParametersLimits[0] && valueMin >= m_vBasicParametersLimits[1] && toDouble(m_vValData[11]).size() == m_vBasicParametersLimits[2]) ? 1 : 0;
-
+    
     bool m_bFlag = true;
     
     for (auto isTrue : m_vValidationCheck)
     {
         //Check if at least one of elements is false and set it to a bool flag
         m_bFlag = (isTrue == false) ? false : m_bFlag;
-        //Write the section name that is not valid
-        if (!isTrue) { m_IniObj.writeLogFile(" header not valid", 1, 0); }
     }
-
+    
     indexHeader = 0;
-
+    //If not valid write the default values
     if (m_bFlag == false)
     {
         m_outFile.open(m_sIniFileName, std::ofstream::trunc);
@@ -290,10 +292,6 @@ bool COptions::validate()
         }
         m_outFile.close();
     }
-
-
-
-
 
     //return the flag
     return m_bFlag;

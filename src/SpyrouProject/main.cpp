@@ -7,14 +7,14 @@ int main()
 	COptions options;
 	CIni iniObj;
 
-	iniObj.readFile();
-	iniObj.writeFile(0);
+	iniObj.readIniFile();
+	iniObj.writeIniFile(0);
 
-	if (!options.validate())
+	if (!options.isValid())
 	{
-		iniObj.writeFile(1);
+		iniObj.writeIniFile(1);
 	}
-	if(!options.validate())
+	if(!options.isValid())
 
 	return 0;
 }

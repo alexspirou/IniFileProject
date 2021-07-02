@@ -12,7 +12,6 @@
 //--------------------------------------------------------------------------------//
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////// 
-
 class CIni
 {
 
@@ -23,10 +22,9 @@ public:
 	~CIni() { writeLogFile("Program has stopped", 1, 1); }
 	//File operations
 	void writeLogFile(std::string msg, bool bTime, bool startsEnd);				//Write the events to logfile
-	size_t readFile();										//Read the file and return the count of headers
-	void writeFile(bool userInput);							//Write to .ini file 
-	bool validateFile();									//Validate the file returns true if it's validated
-	void createLogFile();									//Creates a log folder and file if it doesn't exist
+	size_t readIniFile();														//Read the file and return the count of headers
+	void writeIniFile(bool userInput);											//Write to .ini file 
+	void createLogFile();														//Creates a log folder and file if it doesn't exist
 
 
 private:
