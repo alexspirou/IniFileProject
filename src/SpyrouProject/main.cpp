@@ -3,7 +3,6 @@
 
 int main() 
 {
-
 	COptions options;
 	CIni iniObj;
 	//Create log file

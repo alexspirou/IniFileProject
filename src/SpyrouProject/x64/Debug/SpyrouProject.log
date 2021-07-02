@@ -1,4 +1,3 @@
-﻿  CIni.cpp
-  The contents of <filesystem> are available only with C++17 or later.
-C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\CIni.cpp(206,28): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+﻿  main.cpp
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.h(27,26): warning C4129: 'L': unrecognized character escape sequence
   SpyrouProject.vcxproj -> C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\x64\Debug\SpyrouProject.exe

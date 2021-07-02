@@ -21,39 +21,6 @@
 
 CIni::CIni()
 {
-    auto removeBrackets = [](std::vector<std::string>& v)
-    {
-        int i = 0;
-        for (auto s : v)
-        {
-            //Erase []
-            s.erase(std::remove(s.begin(), s.end(), '['), s.end());
-            s.erase(std::remove(s.begin(), s.end(), ']'), s.end());
-            //Assign to the vector
-            v[i] = s;
-            i++;
-        }
-        return v;
-    };
-    //File in/out objects
-    //std::ifstream inFile{};
-    //std::ofstream outFile{};
-    //Create log file
-    //Enter \n for change the line from the last run
-    //writeLogFile("\n", 0, 0);
-    //outFile << "\n" << std::setfill('-') << std::setw(100) << std::endl;
-   
-
-    //createLogFile();
-    //readIniFile();
-    //Resize vector with header's vector size - section names(2)
-
-
-
-
-    //Remove brackets if exist
-    //m_vHeaderValues = removeBrackets(m_vHeaderValues);
-
 
 }
 
@@ -289,7 +256,7 @@ void CIni::writeIniFile(bool userInput)
     m_vHeaderValues[0] = "2.7.8";                                                       //[ VERSION ]
     m_vHeaderValues[1] = m_sLogFilePath;                                                //[ LOG FOLDER ]
     m_vHeaderValues[2] = m_sLogFilePath + "\\" + m_sLogFileName;                        //[ LOG FILE ]
-    m_vHeaderValues[3] = "4";                                                           //[ MAX THREADS ]
+    m_vHeaderValues[3] = "40";                                                           //[ MAX THREADS ]
     m_vHeaderValues[4] = "1";                                                           //[ MIN CODE ]
     m_vHeaderValues[5] = "2";                                                           //[ MAX CODE ]
     m_vHeaderValues[6] = "150";                                                         //[ RESOLUTION ]
