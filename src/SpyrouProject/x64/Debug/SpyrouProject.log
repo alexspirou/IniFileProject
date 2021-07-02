@@ -1,8 +1,8 @@
 ﻿  COptions.cpp
-C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.h(21,26): warning C4129: 'L': unrecognized character escape sequence
-C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.cpp(35,29): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
-C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.cpp(216,54): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.cpp(216,104): warning C4018: '<=': signed/unsigned mismatch
-C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.cpp(228,51): warning C4018: '>=': signed/unsigned mismatch
-C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.cpp(228,103): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.h(27,26): warning C4129: 'L': unrecognized character escape sequence
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.cpp(53,29): warning C4244: '=': conversion from '__int64' to 'int', possible loss of data
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.cpp(234,54): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.cpp(234,104): warning C4018: '<=': signed/unsigned mismatch
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.cpp(246,51): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\SpyrouProject\COptions.cpp(246,103): warning C4018: '<=': signed/unsigned mismatch
   SpyrouProject.vcxproj -> C:\Users\Alex\Desktop\Project\SpyrouAlexandrosProject\src\x64\Debug\SpyrouProject.exe

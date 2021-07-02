@@ -1,10 +1,28 @@
 #include "COptions.h"
 #include "CIni.h"
 #include <algorithm>
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////// 
+//--------------------------------------------------------------------------------//
+// COptions
+//--------------------------------------------------------------------------------//
+////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////// 
+
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+///////////////////////////// PUBLIC ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 COptions::COptions()
 {
 
 }
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+///////////////////////////// PUBLIC ///////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////
 bool COptions::validate()
 {
     std::ifstream m_inFile{};
@@ -193,12 +211,12 @@ bool COptions::validate()
     //Validated Restrictions 
 
     const std::vector<unsigned> m_vVersionLimits{ 270, 280 };                     //[ VERSION ]
-    const std::string m_sLogFolderPath{"C:\\Application_Log"};                         //[ LOG FOLDER ]
-    const std::string m_sLogFilePath{ "C:\\Application_Log\\Logfile.dbg"};             //[ LOG FILE ]                                                                                  //[ LOG FILE ]
+    const std::string m_sLogFolderPath{"C:\\Application_Log"};                    //[ LOG FOLDER ]
+    const std::string m_sLogFilePath{ "C:\\Application_Log\\Logfile.dbg"};        //[ LOG FILE ]                                                                                  //[ LOG FILE ]
     const unsigned m_vMaxThreads{ 10 };                                           //[ MAX THREADS ]
     const std::vector<int> m_vCodeLimits{ -5, 5 };                                //[ MIN CODE ] [ MAX CODE ]
     const std::vector<unsigned> m_vResolutionLimits{ 0 , 150 };                   //[ RESOLUTION ]
-    const std::vector<std::string> m_vRetrieveType{ "DISTAsNCE", "DEPTH" };        //[ RETRIEVE TYPE ]
+    const std::vector<std::string> m_vRetrieveType{ "DISTANCE", "DEPTH" };        //[ RETRIEVE TYPE ]
     const std::vector<std::string> m_vCoverMapAlgorithm{ "BASIC", "CUSTOM" };     //[ COVERAGE MAP ALGORITHM ]
     const std::vector<std::string> m_vIgnoreMissignLoses{ "YES", "NO" };          //[ IGNORE TX WITH MISSING LOSSES ]
     const std::vector<std::string> m_vMaxRadiusUnits{ "km", "m" };                //[ MAX RADIUS UNIT ]
@@ -245,10 +263,7 @@ bool COptions::validate()
         m_bFlag = (isTrue == false) ? false : m_bFlag;
         //Write the section name that is not valid
         if (!isTrue) { m_IniObj.writeLogFile(" header not valid", 1, 0); }
-        std::cout << isTrue << std::endl;
     }
-
-
 
     indexHeader = 0;
 
@@ -258,7 +273,7 @@ bool COptions::validate()
         
         while (m_outFile && indexHeader < m_vHeaders.size())
         {
-            if(m_vHeaders[indexHeader] == "[ VERSION ]"){ m_outFile << m_vHeaders[indexHeader] << "\n" << m_sVersion << std::endl; }
+            if(m_vHeaders[indexHeader]      == "[ VERSION ]"){ m_outFile << m_vHeaders[indexHeader] << "\n" << m_sVersion << std::endl; }
             else if(m_vHeaders[indexHeader] == "[ LOG FOLDER ]") { m_outFile << m_vHeaders[indexHeader] << "\n" << m_sLogFolder << std::endl; }
             else if(m_vHeaders[indexHeader] == "[ LOG FILE ]") { m_outFile << m_vHeaders[indexHeader] << "\n" << m_sLogFile << std::endl; }
             else if(m_vHeaders[indexHeader] == "[ MAX THREADS ]") { m_outFile << m_vHeaders[indexHeader] << "\n" << m_sMaxThreads <<"\n" <<"-EOS-" <<"\n" << std::endl; }
