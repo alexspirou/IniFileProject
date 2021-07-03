@@ -1,13 +1,5 @@
-<<<<<<< HEAD
 .*vs
 src/SpyrouProject/*
 !src/somefolder/.cpp
 !src/somefolder/.h
 
-=======
-.vs
-src/.vs
-src/.vcxproj
-src/.vcxproj.filters
-src/.vcxproj.user
->>>>>>> test_branch
