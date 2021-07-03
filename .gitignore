@@ -1,6 +1,5 @@
 <<<<<<< HEAD
-.vs
-src/.vs
+.*vs
 src/SpyrouProject
 .*vcxproj
 .*vcxproj.filters
