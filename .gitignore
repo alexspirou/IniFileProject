@@ -1,9 +1,9 @@
 <<<<<<< HEAD
 .vs
 src/.vs
-src/.vcxproj
-src/.vcxproj.filters
-src/.vcxproj.user
+src/SpyrouProject/.vcxproj
+src/SpyrouProject/.vcxproj.filters
+src/SpyrouProject/.vcxproj.user
 =======
 .vs
 src/.vs
