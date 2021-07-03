@@ -1,6 +1,10 @@
 <<<<<<< HEAD
 .vs
 src/.vs
+.vcxproj
+.vcxproj.filters
+.vcxproj.user
 =======
 .vs
+src/.vs
 >>>>>>> test_branch
