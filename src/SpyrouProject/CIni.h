@@ -14,8 +14,6 @@
 //////////////////////////////////////////////////////////////////////////////////// 
 class CIni
 {
-
-
 public:
 	//Constructor/Destructor
 	CIni();
@@ -26,7 +24,6 @@ public:
 	void writeIniFile(bool userInput);											//Write to .ini file 
 	void createLogFile();														//Creates a log folder and file if it doesn't exist
 
-
 private:
 	//Filename 
 	const std::string m_sIniFileName{ "Application.ini" };
@@ -34,5 +31,4 @@ private:
 	const std::string m_sLogFileName{ "Logfile.dbg" };
 	//Path for log folder 
 	const std::string m_sLogFilePath{ "C:\\Application_Log" };
-
 };

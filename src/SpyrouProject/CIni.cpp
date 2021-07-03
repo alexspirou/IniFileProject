@@ -21,9 +21,39 @@
 
 CIni::CIni()
 {
+    std::vector<std::string> m_defaultHeaders(15);
+    m_defaultHeaders[0]  =  "[ -GENERAL SECTION- ]";
+    m_defaultHeaders[1]  =  "[ VERSION ]";
+    m_defaultHeaders[2]  =  "[ LOG FOLDER ]";
+    m_defaultHeaders[3]  =  "[ LOG FILE ]";
+    m_defaultHeaders[4]  =  "[ MAX THREADS ]";
+    m_defaultHeaders[5]  =  "[ -A SECTION- ]";
+    m_defaultHeaders[6]  =  "[ MIN CODE ]";
+    m_defaultHeaders[7]  =  "[ MAX CODE ]";
+    m_defaultHeaders[8]  =  "[ RESOLUTION ]";
+    m_defaultHeaders[9]  =  "[ RETRIEVE TYPE ]";
+    m_defaultHeaders[10] =  "[ COVERAGE MAP ALGORITHM ]";
+    m_defaultHeaders[11] =  "[ IGNORE TX WITH MISSING LOSSES ]";
+    m_defaultHeaders[12] =  "[ -B SECTION- ]";
+    m_defaultHeaders[13] =  "[ MAX RADIUS UNIT ]";
+    m_defaultHeaders[14] =  "[ BASIC PARAMETERS ]";
+    //Check if a header is missing
+    if (readIniFile() < 15)
+    {
+        std::ofstream outFile{};
+        unsigned indexDefaultHeaders{ 0 };
 
+        outFile.open(m_sIniFileName);
+
+        while (indexDefaultHeaders < 15) 
+        {
+            outFile << m_defaultHeaders[indexDefaultHeaders] << std::endl;
+            indexDefaultHeaders++;
+        }
+
+        outFile.close();
+    }
 }
-
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// PRIVATE ///////////////////////////////////////
@@ -159,50 +189,18 @@ size_t CIni::readIniFile()
 
 void CIni::writeIniFile(bool userInput)
 {
-
-    //Find index of section name lambda
-    auto findHeaderIndex = [](std::vector<std::string>& v, std::string& s)
-    {
-        int tempIndex{};
-        //Search vector for section name
-        auto it = find(v.begin(), v.end(), s);
-
-        if (it != v.end())
-        {
-            //Finds the index
-            tempIndex = it - v.begin();
-        }
-        return tempIndex;
-    };
-
-    //Write eos lambda
-    auto writeSectionHeader = [](std::vector<std::string>& vHeaders, std::ostream& os, int sectionIndex, int& currentIndex)
-    {
-        //Check the previous header than section header
-        if (currentIndex == sectionIndex - 1)
-        {
-            //Write -EOS-
-            os << "-EOS-\n" << "\n";
-            //Increase index +1 to get the section header and write it
-            currentIndex++;
-            os << vHeaders[currentIndex] << std::endl;
-        }
-    };
-
    //Check if 
     auto isDigit = [](char& c)
     {
         return std::isdigit(c);
     };
+
     //File in/out objects
     std::ifstream inFile{};
     std::ofstream outFile{};
 
     //Next string for iterate the file
     std::string m_sNextLine{};
-    //Indices for vectors
-    //Header
-
     int indexHeader{ 0 };
 
     std::vector<std::string> m_vHeaders{};
@@ -229,74 +227,54 @@ void CIni::writeIniFile(bool userInput)
     inFile.close();
     writeLogFile("Write has started", 1, 0);
 
-
-
-    //Section Names for special use
-    std::string m_sGeneralSection = { "[ -GENERAL SECTION- ]" };
-    std::vector<std::string> m_vSectionNames{ "[ -A SECTION- ]" , "[ -B SECTION- ]" };
-    std::vector<std::string> m_vInputIntOnly{ "[ MAX THREADS ]","[ MIN CODE ]","[ MAX CODE ]","[ RESOLUTION ]" };
-    std::string m_sVersionHeader = { "[ VERSION ]" };
-
-    //Find the index that starts each section
-    int m_iIndexSectionA = findHeaderIndex(m_vHeaders, m_vSectionNames[0]);
-    int m_iIndexSectionB = findHeaderIndex(m_vHeaders, m_vSectionNames[1]);
-    //Find version index
-    const int m_iIndexVersion = findHeaderIndex(m_vHeaders, m_sVersionHeader);
-    //find headers that take integer input
-    const int m_iIndexMaxThreads = findHeaderIndex(m_vHeaders, m_vInputIntOnly[0]);
-    const int m_iIndexMinCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[1]);
-    const int m_iIndexMaxCode = findHeaderIndex(m_vHeaders, m_vInputIntOnly[2]);
-    const int m_iIndexResolution = findHeaderIndex(m_vHeaders, m_vInputIntOnly[3]);
-
     //Vector for  values
-    std::vector<std::string> m_vHeaderValues(m_vHeaders.size() - 2);
+    std::vector<std::string> m_vOptions(m_vHeaders.size() - 2);
 
      //Values for each section
-    m_vHeaderValues[0] = "2.7.8";                                                       //[ VERSION ]
-    m_vHeaderValues[1] = m_sLogFilePath;                                                //[ LOG FOLDER ]
-    m_vHeaderValues[2] = m_sLogFilePath + "\\" + m_sLogFileName;                        //[ LOG FILE ]
-    m_vHeaderValues[3] = "41";                                                           //[ MAX THREADS ]
-    m_vHeaderValues[4] = "1";                                                           //[ MIN CODE ]
-    m_vHeaderValues[5] = "2";                                                           //[ MAX CODE ]
-    m_vHeaderValues[6] = "150";                                                         //[ RESOLUTION ]
-    m_vHeaderValues[7] = "DISTANCE";                                                    //[ RETRIEVE TYPE ]
-    m_vHeaderValues[8] = "BASIC";                                                       //[ COVERAGE MAP ALGORITHM ]
-    m_vHeaderValues[9] = "NO";                                                          //[ IGNORE TX WITH MISSING LOSSES ]
-    m_vHeaderValues[10] = "km";                                                         //[ MAX RADIUS UNIT ]
-    m_vHeaderValues[11] = "-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0"; //[ BASIC PARAMETERS ]
+    m_vOptions[0] = "2.7.8";                                                       //[ VERSION ]
+    m_vOptions[1] = m_sLogFilePath;                                                //[ LOG FOLDER ]
+    m_vOptions[2] = m_sLogFilePath + "\\" + m_sLogFileName;                        //[ LOG FILE ]
+    m_vOptions[3] = "41";                                                           //[ MAX THREADS ]
+    m_vOptions[4] = "1";                                                           //[ MIN CODE ]
+    m_vOptions[5] = "2";                                                           //[ MAX CODE ]
+    m_vOptions[6] = "150";                                                         //[ RESOLUTION ]
+    m_vOptions[7] = "DISTANCE";                                                    //[ RETRIEVE TYPE ]
+    m_vOptions[8] = "BASIC";                                                       //[ COVERAGE MAP ALGORITHM ]
+    m_vOptions[9] = "NO";                                                          //[ IGNORE TX WITH MISSING LOSSES ]
+    m_vOptions[10] = "km";                                                         //[ MAX RADIUS UNIT ]
+    m_vOptions[11] = "-106.0,100,150.0,10000.0,1,9.0,1,-98.0,2.0,-98.0,3.0,1,0,0"; //[ BASIC PARAMETERS ]
 
-    for (auto header : m_vHeaders)
-    {
-        std::cout << header << std::endl;
-    }
     //Open file in replace mode
     outFile.open(m_sIniFileName, std::ofstream::trunc);
 
-    //Values
-    int indexValues{ 0 };
+    int indexOptions{ 0 };
     indexHeader = 0;
-    
+  
     //Iterate through whole file
     while (outFile && indexHeader < m_vHeaders.size())
     {
-            
-        
-        if (m_vHeaders[indexHeader] == m_sGeneralSection || m_vHeaders[indexHeader] == "[ -A SECTION- ]" || m_vHeaders[indexHeader] == "[ -B SECTION- ]")
+        //Program's input
+        if (userInput == 0)
         {
-            outFile << m_vHeaders[indexHeader] << std::endl;
-            indexHeader++;
+            //If the header doesn't need an option.
+            if (m_vHeaders[indexHeader] == "[ -GENERAL SECTION- ]" || m_vHeaders[indexHeader] == "[ -A SECTION- ]" || m_vHeaders[indexHeader] == "[ -B SECTION- ]")
+            {
+                outFile << m_vHeaders[indexHeader] << std::endl;
+                indexHeader++;
+            }
+            //If -EOS- needs to be written
+            else if (m_vHeaders[indexHeader] == "[ MAX THREADS ]" || m_vHeaders[indexHeader] == "[ IGNORE TX WITH MISSING LOSSES ]")
+            {
+                outFile << m_vHeaders[indexHeader] << "\n" << m_vOptions[indexOptions] << "\n" << "-EOS-" << "\n" << std::endl;
+                indexHeader++; indexOptions++;
+            }
+            //Header and option
+            else
+            {
+                outFile << m_vHeaders[indexHeader] << "\n" << m_vOptions[indexOptions] << std::endl;
+                indexHeader++; indexOptions++;
+            }
         }
-        else if (m_vHeaders[indexHeader] == "[ MAX THREADS ]" || m_vHeaders[indexHeader] == "[ IGNORE TX WITH MISSING LOSSES ]")
-        {
-            outFile << m_vHeaders[indexHeader] << "\n" << m_vHeaderValues[indexValues] << "\n" << "-EOS-" << "\n" << std::endl;
-            indexHeader++; indexValues++;
-        }
-        else
-        {
-            outFile << m_vHeaders[indexHeader] << "\n" << m_vHeaderValues[indexValues] << std::endl;
-            indexHeader++; indexValues++;
-        }
-
         //User's input
         if(userInput == 1)
         {
@@ -309,11 +287,9 @@ void CIni::writeIniFile(bool userInput)
             //Check if the header is version to write header and the program's value
             if (m_vHeaders[indexHeader] == "[ VERSION ]")
             {
-                outFile << m_vHeaders[indexHeader] << "\n" << m_vHeaderValues[0] << std::endl;
+                outFile << m_vHeaders[indexHeader] << "\n" << m_vOptions[0] << std::endl;
                 indexHeader++;
             }
-
-
             //Print in console the header names
             std::cout << m_vHeaders[indexHeader] << std::endl;
 
@@ -330,26 +306,29 @@ void CIni::writeIniFile(bool userInput)
                     std::getline(std::cin, m_sUserInput);
                 }
             }
+            //If the input doesn't need to be an integer
             else
             {
-                //If the input have not to be an integer
                 std::getline(std::cin, m_sUserInput);
 
             }
-            
-            //Write the header and the value
+            //Write the header and the option with -EOS-
             if (m_vHeaders[indexHeader] == "[ MAX THREADS ]" || m_vHeaders[indexHeader] == "[ IGNORE TX WITH MISSING LOSSES ]")
             {
                 outFile << m_vHeaders[indexHeader] << "\n" << m_sUserInput << "\n" << "-EOS-" << "\n" << std::endl;
             }
+            //Write header and option
             else
             {
                 outFile << m_vHeaders[indexHeader] << "\n" << m_sUserInput << std::endl;
+
             }
             indexHeader++;
+
         }
                 
     }
+    //End of file write -EOS and -EOF-
     outFile << "-EOS-" << "\n" << "-EOF-" << std::endl;
     //Close file
     outFile.close();
