@@ -4,7 +4,6 @@
 #include <iomanip>
 #include <filesystem>
 #include "CIni.h"
-
 ////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////////// 
 //--------------------------------------------------------------------------------//
@@ -97,7 +96,6 @@ void CIni::createLogFile()
 /////////////////////////////////////////////////////////////////////////////
 // Write events and the current date/time  in the log file 
 /////////////////////////////////////////////////////////////////////////////
-
 void CIni::writeLogFile(std::string msg, bool bTime, bool bStartsEnd)
 {
 
@@ -137,7 +135,6 @@ void CIni::writeLogFile(std::string msg, bool bTime, bool bStartsEnd)
     }
     outFile.close();
 }
-
 /////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 ///////////////////////////// PUBLIC ///////////////////////////////////////
@@ -151,14 +148,14 @@ void CIni::writeLogFile(std::string msg, bool bTime, bool bStartsEnd)
 size_t CIni::readIniFile()
 {
     writeLogFile("Read has started", 1, 0);
+    //counter for header's vector
     size_t m_szHeaderSize{ 0 };
-    int i = { 0 };
-    //count header vector size
     //File in/out objects
     std::ifstream inFile{};
     std::ofstream outFile{};
     //Next string for iterate the file
     std::string m_sNextLine{};
+
     inFile.open(m_sIniFileName);
     while (getline(inFile, m_sNextLine))
     {
@@ -169,8 +166,6 @@ size_t CIni::readIniFile()
         }
     }
     inFile.close();
-
-
 
     //Send message to logfile
     writeLogFile("Read completed", 1, 0);
@@ -234,7 +229,7 @@ void CIni::writeIniFile(bool userInput)
     m_vOptions[0] = "2.7.8";                                                       //[ VERSION ]
     m_vOptions[1] = m_sLogFilePath;                                                //[ LOG FOLDER ]
     m_vOptions[2] = m_sLogFilePath + "\\" + m_sLogFileName;                        //[ LOG FILE ]
-    m_vOptions[3] = "41";                                                           //[ MAX THREADS ]
+    m_vOptions[3] = "4";                                                           //[ MAX THREADS ]
     m_vOptions[4] = "1";                                                           //[ MIN CODE ]
     m_vOptions[5] = "2";                                                           //[ MAX CODE ]
     m_vOptions[6] = "150";                                                         //[ RESOLUTION ]

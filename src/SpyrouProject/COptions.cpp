@@ -41,13 +41,13 @@ bool COptions::isValid()
         //Try for basic parameters string to double per comma
         std::vector <int> vPreviousComma;
         //indices 
-        int i = 0;
+        int index = 0;
         //Previous comma
         int prevIndexComma = 0;
         //Next comma
         int indexComma = 0;
 
-        while (i < stringToDouble.length())
+        while (index < stringToDouble.length())
         {
             //find the comma
             auto it = std::find(stringToDouble.begin(), stringToDouble.end(), ',');
@@ -66,38 +66,38 @@ bool COptions::isValid()
             //Store the previous state
             vPreviousComma.push_back(prevIndexComma);
             //Set count as the previous state to exit the loop
-            i = prevIndexComma;
+            index = prevIndexComma;
         }
         //Vector store the values without comma
         std::vector<std::string> vStringDoubleValues(vPreviousComma.size());
 
         //Index for vPreviousComma vector to start for the second element
-        i = 1;
-        int j = 0;
+        index = 1;
+        int indexVStringToDoubleValues = 0;
         int prevState = 0;
 
         //Outter loop equal the comma size
         for (int x = 0; x < vPreviousComma.size() - 1; x++)
         {
-            for (int in = prevState; in < vPreviousComma[i]; in++)
+            for (int in = prevState; in < vPreviousComma[index]; in++)
             {
                 //Inner loop that store the value betwwen previous and next comma
-                vStringDoubleValues[j].push_back(stringToDouble[in]);
+                vStringDoubleValues[indexVStringToDoubleValues].push_back(stringToDouble[in]);
                 //Set current comma to previous comma
-                prevState = vPreviousComma[i];
+                prevState = vPreviousComma[index];
             }
             //Increase index for previous comma vector and string vStringDoubleValues vector
-            i++; j++;
+            index++; indexVStringToDoubleValues++;
         }
 
         std::vector<double> vDoubleValues(vStringDoubleValues.size() - 1);
-        i = 0;
+        unsigned indexDoubleValues = 0;
 
-        while (i < vDoubleValues.size())
+        while (indexDoubleValues < vDoubleValues.size())
         {
             //Conver to double and store to double vector
-            vDoubleValues[i] = stod(vStringDoubleValues[i]);
-            i++;
+            vDoubleValues[indexDoubleValues] = stod(vStringDoubleValues[indexDoubleValues]);
+            indexDoubleValues++;
         }
 
         return vDoubleValues;

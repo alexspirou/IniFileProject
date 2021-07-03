@@ -3,7 +3,7 @@
 
 int main() 
 {
-	//Test BRanch
+	//Main BRanch
 	COptions options;
 	CIni iniObj;
 	//Create log file
