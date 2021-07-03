@@ -1,6 +1,8 @@
 <<<<<<< HEAD
 .*vs
-SpyrouProject.vcxproj.filters
+src/SpyrouProject/*
+!src/somefolder/.cpp
+!src/somefolder/.h
 
 =======
 .vs
