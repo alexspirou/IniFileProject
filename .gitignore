@@ -1,13 +1,13 @@
 <<<<<<< HEAD
 .vs
 src/.vs
-.vcxproj
-.vcxproj.filters
-.vcxproj.user
+src/.vcxproj
+src/.vcxproj.filters
+src/.vcxproj.user
 =======
 .vs
 src/.vs
-.vcxproj
-.vcxproj.filters
-.vcxproj.user
+src/.vcxproj
+src/.vcxproj.filters
+src/.vcxproj.user
 >>>>>>> test_branch
