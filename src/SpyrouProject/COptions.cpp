@@ -261,10 +261,10 @@ bool COptions::isValid()
     
     bool m_bFlag = true;
     
-    for (auto isTrue : m_vValidationCheck)
+    for (auto validationElement : m_vValidationCheck)
     {
         //Check if at least one of elements is false and set it to a bool flag
-        m_bFlag = (isTrue == false) ? false : m_bFlag;
+        m_bFlag = (validationElement == false) ? false : m_bFlag;
     }
     
     indexHeader = 0;
@@ -275,7 +275,7 @@ bool COptions::isValid()
         
         while (m_outFile && indexHeader < m_vHeaders.size())
         {
-            if(m_vHeaders[indexHeader]      == "[ VERSION ]"){ m_outFile << m_vHeaders[indexHeader] << "\n" << m_sVersion << std::endl; }
+                 if(m_vHeaders[indexHeader] == "[ VERSION ]"){ m_outFile << m_vHeaders[indexHeader] << "\n" << m_sVersion << std::endl; }
             else if(m_vHeaders[indexHeader] == "[ LOG FOLDER ]") { m_outFile << m_vHeaders[indexHeader] << "\n" << m_sLogFolder << std::endl; }
             else if(m_vHeaders[indexHeader] == "[ LOG FILE ]") { m_outFile << m_vHeaders[indexHeader] << "\n" << m_sLogFile << std::endl; }
             else if(m_vHeaders[indexHeader] == "[ MAX THREADS ]") { m_outFile << m_vHeaders[indexHeader] << "\n" << m_sMaxThreads <<"\n" <<"-EOS-" <<"\n" << std::endl; }

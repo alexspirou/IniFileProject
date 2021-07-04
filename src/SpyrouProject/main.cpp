@@ -3,7 +3,7 @@
 
 int main() 
 {
-	//Main BRanch
+	//Main Branch
 	COptions options;
 	CIni iniObj;
 	//Create log file
