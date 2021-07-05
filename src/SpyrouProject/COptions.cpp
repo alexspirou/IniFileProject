@@ -34,75 +34,7 @@ bool COptions::isValid()
     std::ifstream m_inFile{};
     std::ofstream m_outFile{};
     ////Validate
-
-    //Array of string to double per  comma
-    auto toDouble = [](std::string stringToDouble)
-    {
-        //Try for basic parameters string to double per comma
-        std::vector <int> vPreviousComma;
-        //indices 
-        int index = 0;
-        //Previous comma
-        int prevIndexComma = 0;
-        //Next comma
-        int indexComma = 0;
-
-        while (index < stringToDouble.length())
-        {
-            //find the comma
-            auto it = std::find(stringToDouble.begin(), stringToDouble.end(), ',');
-
-            //store the previous state
-            prevIndexComma = indexComma;
-
-            //Count the difference
-            indexComma = it - stringToDouble.begin();
-
-            //Erase comma to find the next
-            if (indexComma <= stringToDouble.size())
-            {
-                stringToDouble.erase(stringToDouble.begin() + indexComma);
-            }
-            //Store the previous state
-            vPreviousComma.push_back(prevIndexComma);
-            //Set count as the previous state to exit the loop
-            index = prevIndexComma;
-        }
-        //Vector store the values without comma
-        std::vector<std::string> vStringDoubleValues(vPreviousComma.size());
-
-        //Index for vPreviousComma vector to start for the second element
-        index = 1;
-        int indexVStringToDoubleValues = 0;
-        int prevState = 0;
-
-        //Outter loop equal the comma size
-        for (int x = 0; x < vPreviousComma.size() - 1; x++)
-        {
-            for (int in = prevState; in < vPreviousComma[index]; in++)
-            {
-                //Inner loop that store the value betwwen previous and next comma
-                vStringDoubleValues[indexVStringToDoubleValues].push_back(stringToDouble[in]);
-                //Set current comma to previous comma
-                prevState = vPreviousComma[index];
-            }
-            //Increase index for previous comma vector and string vStringDoubleValues vector
-            index++; indexVStringToDoubleValues++;
-        }
-
-        std::vector<double> vDoubleValues(vStringDoubleValues.size() - 1);
-        unsigned indexDoubleValues = 0;
-
-        while (indexDoubleValues < vDoubleValues.size())
-        {
-            //Conver to double and store to double vector
-            vDoubleValues[indexDoubleValues] = stod(vStringDoubleValues[indexDoubleValues]);
-            indexDoubleValues++;
-        }
-
-        return vDoubleValues;
-    };
-
+    // 
     //Find max lambda
     auto findMax = [](std::vector<double> doubleVec)
     {
@@ -156,7 +88,9 @@ bool COptions::isValid()
     //Vector for headers
     size_t m_iHeadersSize = m_IniObj.readIniFile();
     std::vector<std::string> m_vHeaders(m_iHeadersSize);
-
+    double m_dNextDoule{ 0 };
+    std::vector<double> m_vBasicParameters{};
+    char m_nextChar;
     //READ FILE
     m_inFile.open(m_sIniFileName);
     //
@@ -174,7 +108,7 @@ bool COptions::isValid()
     //CHECK FOR VALIDATION
     
     //Vector for validation data
-    std::vector<std::string> m_vValData(m_iHeadersSize - 3);
+    std::vector<std::string> m_vValData(m_iHeadersSize - 4);
     //Idex and counter for -EOS-
     unsigned indexValData{ 0 };
     unsigned m_IEosCounter{ 0 };
@@ -189,7 +123,6 @@ bool COptions::isValid()
         m_IEosCounter = (m_sNextLine == "-EOS-") ? m_IEosCounter += 1 : m_IEosCounter;
         if (m_IEosCounter >= 3)
         {
-
             break;
         }
         //Skip when a header doesn't need an option
@@ -198,8 +131,15 @@ bool COptions::isValid()
             getline(m_inFile, m_sNextLine);
             indexHeader++;
         }
+        if (m_sNextLine == "[ BASIC PARAMETERS ]")
+        {
+            while (m_inFile >> m_dNextDoule >> m_nextChar)
+            {
+                m_vBasicParameters.push_back(m_dNextDoule);
+            }
+        }
         //Change line when the header has the same value and store the data
-        if (m_sNextLine == m_vHeaders[indexHeader] )
+        else if (m_sNextLine == m_vHeaders[indexHeader])
         {
           
             //Change line to access the values instead of headers
@@ -212,6 +152,7 @@ bool COptions::isValid()
 
     m_inFile.close();
 
+        
     //Validated Restrictions 
 
     const std::vector<unsigned> m_vVersionLimits{ 270, 280 };                     //[ VERSION ]
@@ -227,12 +168,13 @@ bool COptions::isValid()
     const std::vector<double> m_vBasicParametersLimits{ 10000, -500, 14 };        //[ BASIC PARAMETERS ]
 
     //Find min max for check the basicparameters limits
-    const double valueMax = findMax(toDouble(m_vValData[11]));
-    const double valueMin = findMin(toDouble(m_vValData[11]));
+    const double valueMax = findMax(m_vBasicParameters);
+    const double valueMin = findMin(m_vBasicParameters);
 
     //Write in the log file
     m_IniObj.writeLogFile("Validation", 1, 0);
-    std::vector<bool> m_vValidationCheck(m_vValData.size());
+   
+    std::vector<bool> m_vValidationCheck(m_vValData.size() + 1);
 
     //[VERSION]                         
     m_vValidationCheck[0] = (toIntDot(m_vValData[0]) >= m_vVersionLimits[0] && toIntDot(m_vValData[0]) <= m_vVersionLimits[1]) ? 1 : 0;
@@ -257,7 +199,7 @@ bool COptions::isValid()
     //[ MAX RADIUS UNIT ]
     m_vValidationCheck[10] = (toUpper(m_vValData[10]) == toUpper(m_vMaxRadiusUnits[0]) || toUpper(m_vValData[10]) == toUpper(m_vMaxRadiusUnits[1])) ? 1 : 0;
     //[ BASIC PARAMETERS ]
-    m_vValidationCheck[11] = (valueMax <= m_vBasicParametersLimits[0] && valueMin >= m_vBasicParametersLimits[1] && toDouble(m_vValData[11]).size() == m_vBasicParametersLimits[2]) ? 1 : 0;
+    m_vValidationCheck[11] = (valueMax <= m_vBasicParametersLimits[0] && valueMin >= m_vBasicParametersLimits[1] && m_vBasicParameters.size() == m_vBasicParametersLimits[2]) ? 1 : 0;
     
     bool m_bFlag = true;
     
