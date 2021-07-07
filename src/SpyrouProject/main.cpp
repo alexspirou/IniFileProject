@@ -15,11 +15,19 @@ int main()
 	//If not valid aks for user's inputs
 	if (!options.isValid())
 	{
+		std::cout << "Validation Failed\n";
+		std::cout << "Enter new options\n";
 		iniObj.writeIniFile(1);
 	}
+	else
+	{
+		std::cout << "Validation Succeed\n";
+	}
 	//If fail again, set default values
-	if(!options.isValid())
-	
+	if (!options.isValid())
+	{
+		std::cout << "Default options are entered\n";
+	}
 	iniObj.writeLogFile("Program has stopped", 1, 1);
 
 	return 0;

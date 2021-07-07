@@ -33,29 +33,6 @@ bool COptions::isValid()
     //File stream objects
     std::ifstream m_inFile{};
     std::ofstream m_outFile{};
-    ////Validate
-    // 
-    //Find max lambda
-    auto findMax = [](std::vector<double> doubleVec)
-    {
-        double max = doubleVec[0];
-        for (auto element : doubleVec)
-        {
-            max = (max <= element) ? max = element : max;
-        }
-        return max;
-    };
-
-    //Find min lambda
-    auto findMin = [](std::vector<double> doubleVec)
-    {
-        double min = doubleVec[0];
-        for (auto element : doubleVec)
-        {
-            min = (min >= element) ? min = element : min;
-        }
-        return min;
-    };
 
     //String to Int lambda
     auto toInt = [](std::string s)
@@ -167,9 +144,16 @@ bool COptions::isValid()
     const std::vector<std::string> m_vMaxRadiusUnits{ "km", "m" };                //[ MAX RADIUS UNIT ]
     const std::vector<double> m_vBasicParametersLimits{ 10000, -500, 14 };        //[ BASIC PARAMETERS ]
 
-    //Find min max for check the basicparameters limits
-    const double valueMax = findMax(m_vBasicParameters);
-    const double valueMin = findMin(m_vBasicParameters);
+    double valueMax = m_vBasicParameters[0];
+    for (auto element : m_vBasicParameters)
+    {
+        valueMax = (valueMax <= element) ? valueMax = element : valueMax;
+    }
+    double valueMin = m_vBasicParameters[0];
+    for (auto element : m_vBasicParameters)
+    {
+        valueMin = (valueMin >= element) ? valueMin = element : valueMin;
+    }
 
     //Write in the log file
     m_IniObj.writeLogFile("Validation", 1, 0);
@@ -232,11 +216,17 @@ bool COptions::isValid()
             else{ m_outFile << m_vHeaders[indexHeader] << std::endl;}
             indexHeader++;
         }
+
         m_outFile.close();
     }
-    if (m_bFlag == true) { m_IniObj.writeLogFile("Validation completed", 1, 0); }
-    else { m_IniObj.writeLogFile("Validation failed", 1, 0); }
+    if (m_bFlag == true) 
+    {
+        m_IniObj.writeLogFile("Validation completed", 1, 0);
+    }
+    else
+    {
+        m_IniObj.writeLogFile("Validation failed", 1, 0);
+    }
     //return the flag
     return m_bFlag;
-
 }

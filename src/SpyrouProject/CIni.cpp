@@ -248,7 +248,7 @@ void CIni::writeIniFile(bool userInput)
     //Iterate through whole file
     while (outFile && indexHeader < m_vHeaders.size())
     {
-        //Program's input
+        //Program input
         if (userInput == 0)
         {
             //If the header doesn't need an option.
@@ -270,7 +270,7 @@ void CIni::writeIniFile(bool userInput)
                 indexHeader++; indexOptions++;
             }
         }
-        //User's input
+        //User input
         if(userInput == 1)
         {
             std::string m_sUserInput{};
@@ -305,7 +305,6 @@ void CIni::writeIniFile(bool userInput)
             else
             {
                 std::getline(std::cin, m_sUserInput);
-
             }
             //Write the header and the option with -EOS-
             if (m_vHeaders[indexHeader] == "[ MAX THREADS ]" || m_vHeaders[indexHeader] == "[ IGNORE TX WITH MISSING LOSSES ]")
@@ -316,12 +315,9 @@ void CIni::writeIniFile(bool userInput)
             else
             {
                 outFile << m_vHeaders[indexHeader] << "\n" << m_sUserInput << std::endl;
-
             }
             indexHeader++;
-
-        }
-                
+        }               
     }
     //End of file write -EOS and -EOF-
     outFile << "-EOS-" << "\n" << "-EOF-" << std::endl;
